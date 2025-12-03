@@ -295,7 +295,7 @@ def make_station_cdl_plots(
     
     for group_idx, var_group in enumerate(var_groups):
         # Create subplots with custom gridspec for better control
-        fig = plt.figure(figsize=(16, 16))
+        fig = plt.figure(figsize=(18, 18))
         
         # Special handling for ETo and ETr - calculate shared y-axis limits
         shared_y_limits = None
@@ -381,6 +381,7 @@ def make_station_cdl_plots(
             # Set x-axis label for counts
             ax_kde.set_xlabel('site-days', fontsize=18)
             ax_kde.xaxis.set_major_locator(plt.MaxNLocator(nbins=4, integer=True))  # Integer ticks only
+            ax_kde.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x):,}'))  # Comma formatting
             ax_kde.tick_params(axis='both', labelsize=14)
             
             # Remove top and right spines for KDE
