@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib
 from matplotlib.lines import Line2D
+from pyproj import Transformer
 
 # Read data first to check actual ranges
 df = pd.read_csv("../../Data/openet_ground_station_master_list_cleaned_v4.csv")
@@ -141,6 +142,40 @@ for i in np.arange(3):
     ax.set_xlabel('Longitude ($^\\circ$)', fontsize=30)
     ax.set_ylabel('Latitude ($^\\circ$)', fontsize=30)
     ax.set_aspect('equal')
+    
+    # Properly set tick label font sizes
+    ax.tick_params(axis='x', labelsize=20)
+    ax.tick_params(axis='y', labelsize=20)
+
+    # Get current axis limits in projected coordinates
+    xlim = ax.get_xlim()
+    ylim = ax.get_ylim()
+    
+    # Create transformer from projected CRS back to WGS84
+    transformer = Transformer.from_crs("ESRI:102004", "EPSG:4326", always_xy=True)
+    
+    # Generate tick positions in projected coordinates
+    x_ticks_proj = np.linspace(xlim[0], xlim[1], 5)
+    y_ticks_proj = np.linspace(ylim[0], ylim[1], 5)
+    
+    # Transform to lat/lon for labels (use center y for x-ticks, center x for y-ticks)
+    center_y = (ylim[0] + ylim[1]) / 2
+    center_x = (xlim[0] + xlim[1]) / 2
+    
+    x_labels = []
+    for x in x_ticks_proj:
+        lon, lat = transformer.transform(x, center_y)
+        x_labels.append(f'{lon:.0f}°')
+    
+    y_labels = []
+    for y in y_ticks_proj:
+        lon, lat = transformer.transform(center_x, y)
+        y_labels.append(f'{lat:.0f}°')
+    
+    ax.set_xticks(x_ticks_proj)
+    ax.set_xticklabels(x_labels)
+    ax.set_yticks(y_ticks_proj)
+    ax.set_yticklabels(y_labels)
     
     # Properly set tick label font sizes
     ax.tick_params(axis='x', labelsize=20)
