@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "improved_sites",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_High", "Latitude": 36.169669, "Longitude": -120.201004, "corr_uncorr_type_corr": "Corrected", "r2_corr": 0.98356339167130302, "MAE_corr": 30.008491742587079, "MBE_corr": -30.008491742587079, "corr_uncorr_type_uncorr": "Uncorrected", "r2_uncorr": 0.98419464048991079, "MAE_uncorr": 24.74870242655204, "MBE_uncorr": -24.335574775475752, "r2_diff": -0.00063124881860776583, "MAE_diff": 5.2597893160350395, "MBE_diff": -5.6729169671113269 }, "geometry": { "type": "Point", "coordinates": [ -120.201004, 36.169669 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_Med", "Latitude": 36.177669, "Longitude": -120.20264499999899, "corr_uncorr_type_corr": "Corrected", "r2_corr": 0.98613776655629604, "MAE_corr": 33.15932763151617, "MBE_corr": -33.15932763151617, "corr_uncorr_type_uncorr": "Uncorrected", "r2_uncorr": 0.98685733850204516, "MAE_uncorr": 27.798010667248995, "MBE_uncorr": -27.697105382869221, "r2_diff": -0.00071957194574912009, "MAE_diff": 5.361316964267175, "MBE_diff": -5.4622222486469489 }, "geometry": { "type": "Point", "coordinates": [ -120.202644999998995, 36.177669 ] } }
+]
+}

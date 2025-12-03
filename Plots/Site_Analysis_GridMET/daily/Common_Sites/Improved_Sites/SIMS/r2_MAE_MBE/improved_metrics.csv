@@ -1,0 +1,2 @@
+SITE_ID,version,corr_uncorr_type_corr,flux_calc,openet_model,r2_corr,MAE_corr,MBE_corr,Latitude,Longitude,corr_uncorr_type_uncorr,r2_uncorr,MAE_uncorr,MBE_uncorr,r2_diff,MAE_diff,MBE_diff
+Almond_High,v3,corr,Closed,SIMS,0.794778776554057,0.8994145367313099,0.2236608648955573,36.169669,-120.201004,uncorr,0.7931651100587243,0.963821288440057,0.365343458840579,0.0016136664953327884,-0.0644067517087471,-0.1416825939450217

@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "improved_sites",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_High", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SSEBOP", "r2_corr": 0.89451604836088394, "MAE_corr": 21.128656694532541, "MBE_corr": -16.533801245690444, "Latitude": 36.169669, "Longitude": -120.201004, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.89429567463254689, "MAE_uncorr": 20.180060250241983, "MBE_uncorr": -11.439543723716367, "r2_diff": 0.00022037372833705327, "MAE_diff": 0.94859644429055834, "MBE_diff": -5.0942575219740771 }, "geometry": { "type": "Point", "coordinates": [ -120.201004, 36.169669 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_Med", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SSEBOP", "r2_corr": 0.93637448469040041, "MAE_corr": 17.431446613550211, "MBE_corr": -12.434454700088065, "Latitude": 36.177669, "Longitude": -120.20264499999899, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.93403179853696106, "MAE_uncorr": 16.50415119214361, "MBE_uncorr": -7.07524822321444, "r2_diff": 0.002342686153439355, "MAE_diff": 0.92729542140660115, "MBE_diff": -5.3592064768736245 }, "geometry": { "type": "Point", "coordinates": [ -120.202644999998995, 36.177669 ] } }
+]
+}

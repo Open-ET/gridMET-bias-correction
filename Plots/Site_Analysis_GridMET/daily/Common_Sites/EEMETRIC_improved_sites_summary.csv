@@ -1,0 +1,4 @@
+Metric_Combination,Number_of_Sites,Site_IDs
+MBE,3,"Almond_High, Almond_Med, US-xSL"
+MAE,22,"Almond_High, Almond_Med, BAR012, RIP760, US-AR1, US-Bi1, US-Bi2, US-Bkg, US-Bo1, US-Br1, US-Br3, US-Dk1, US-KLS, US-Mj1, US-Mj2, US-Ro1, US-Ro2, US-Ro3, US-Ro6, US-Tw2, US-Tw3, US-Twt"
+R²,19,"Almond_Low, BAR012, Ellendale, RIP760, US-Bi1, US-Bkg, US-Bo1, US-Br1, US-Br3, US-Dk1, US-KLS, US-OF2, US-OF4, US-Ro1, US-Ro2, US-Ro3, US-Ro6, US-Tw2, US-Tw3"

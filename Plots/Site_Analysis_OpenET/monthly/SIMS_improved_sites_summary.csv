@@ -1,0 +1,5 @@
+Metric_Combination,Number_of_Sites,Site_IDs
+All Metrics,3,"Almond_High, Almond_Med, LYS_SW"
+MBE,6,"Almond_High, Almond_Med, LYS_NE, LYS_NW, LYS_SE, LYS_SW"
+MAE,34,"Almond_High, Almond_Med, BAR012, B_01, Ellendale, ET_8, LYS_SW, manilacotton, S2, UA1_HartFarm, UA1_JV187, UA2_JV330, US-AR1, US-ARM, US-Bi1, US-Bkg, US-Bo1, US-Br1, US-Br3, US-Dk1, US-Bi2, US-KLS, US-Mj1, US-Mj2, US-Ne1, US-Ne2, US-Ne3, US-Ro1, US-Ro2, US-Ro3, US-Ro5, US-Ro6, US-Tw2, US-Tw3"
+R²,24,"ALARC2_Smith6, Almond_High, Almond_Low, Almond_Med, ET_8, LYS_NE, LYS_NW, LYS_SE, LYS_SW, manilacotton, S2, UA1_JV187, UA3_JV108, US-AR1, US-Bi1, US-Br1, US-Br3, US-Bi2, US-KLS, US-OF1, US-Ro2, US-Ro6, US-Tw2, US-Tw3"

@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "improved_sites",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_High", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "ensemble_mean", "r2_corr": 0.80138218509278403, "MAE_corr": 0.89205235562403074, "MBE_corr": 0.11546462114180869, "Latitude": 36.169669, "Longitude": -120.201004, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.80004225715778943, "MAE_uncorr": 0.90183708504389881, "MBE_uncorr": 0.19610427216087581, "r2_diff": 0.0013399279349946003, "MAE_diff": -0.0097847294198680768, "MBE_diff": -0.080639651019067116 }, "geometry": { "type": "Point", "coordinates": [ -120.201004, 36.169669 ] } }
+]
+}

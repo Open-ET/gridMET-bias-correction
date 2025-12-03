@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "improved_sites",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_High", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SSEBOP", "r2_corr": 0.75293918424348794, "MAE_corr": 1.0703291418906975, "MBE_corr": -0.67791360885816498, "Latitude": 36.169669, "Longitude": -120.201004, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.75533155128142848, "MAE_uncorr": 1.0096341472861481, "MBE_uncorr": -0.4909628781320452, "r2_diff": -0.0023923670379405459, "MAE_diff": 0.060694994604549413, "MBE_diff": -0.18695073072611978 }, "geometry": { "type": "Point", "coordinates": [ -120.201004, 36.169669 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_Med", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SSEBOP", "r2_corr": 0.81603949374052576, "MAE_corr": 0.98803869573694603, "MBE_corr": -0.37931894663849391, "Latitude": 36.177669, "Longitude": -120.20264499999899, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.82011332644922474, "MAE_uncorr": 0.94699024457211478, "MBE_uncorr": -0.18605062853305451, "r2_diff": -0.0040738327086989878, "MAE_diff": 0.041048451164831246, "MBE_diff": -0.1932683181054394 }, "geometry": { "type": "Point", "coordinates": [ -120.202644999998995, 36.177669 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "US-xSL", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SSEBOP", "r2_corr": 0.35024579393013711, "MAE_corr": 0.93245987613491621, "MBE_corr": 0.65387817231339673, "Latitude": 40.4619, "Longitude": -103.0293, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.35954841575012031, "MAE_uncorr": 0.9302093721346576, "MBE_uncorr": 0.65405491391145298, "r2_diff": -0.0093026218199832034, "MAE_diff": 0.002250504000258613, "MBE_diff": -0.00017674159805625145 }, "geometry": { "type": "Point", "coordinates": [ -103.0293, 40.4619 ] } }
+]
+}

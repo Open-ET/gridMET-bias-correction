@@ -1,0 +1,2 @@
+SITE_ID,version,corr_uncorr_type_corr,flux_calc,openet_model,r2_corr,MAE_corr,MBE_corr,Latitude,Longitude,corr_uncorr_type_uncorr,r2_uncorr,MAE_uncorr,MBE_uncorr,r2_diff,MAE_diff,MBE_diff
+Almond_High,v3,corr,Closed,ensemble_mean,0.801382185092784,0.8920523556240307,0.1154646211418087,36.169669,-120.201004,uncorr,0.8000422571577894,0.9018370850438988,0.1961042721608758,0.0013399279349946003,-0.009784729419868077,-0.08063965101906712

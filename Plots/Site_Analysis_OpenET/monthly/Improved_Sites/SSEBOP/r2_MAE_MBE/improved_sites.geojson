@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "improved_sites",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "SITE_ID": "LYS_NE", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SSEBOP", "r2_corr": 0.59091045146413945, "MAE_corr": 29.780514589065842, "MBE_corr": -3.6330953752355177, "Latitude": 35.188127, "Longitude": -102.095543, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.58813202697501088, "MAE_uncorr": 30.284200636902732, "MBE_uncorr": -2.6616556248015022, "r2_diff": 0.0027784244891285725, "MAE_diff": -0.50368604783689008, "MBE_diff": -0.97143975043401554 }, "geometry": { "type": "Point", "coordinates": [ -102.095543, 35.188127 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "LYS_SE", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SSEBOP", "r2_corr": 0.63119702375883691, "MAE_corr": 28.45538394781331, "MBE_corr": -5.1244265345701479, "Latitude": 35.186095, "Longitude": -102.09556, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.62567034901353913, "MAE_uncorr": 28.973203266026392, "MBE_uncorr": -4.0405440209110903, "r2_diff": 0.0055266747452977771, "MAE_diff": -0.51781931821308191, "MBE_diff": -1.0838825136590575 }, "geometry": { "type": "Point", "coordinates": [ -102.095559999998997, 35.186095 ] } }
+]
+}

@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "improved_sites",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_High", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SIMS", "r2_corr": 0.79477877655405704, "MAE_corr": 0.89941453673130989, "MBE_corr": 0.22366086489555731, "Latitude": 36.169669, "Longitude": -120.201004, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.79316511005872425, "MAE_uncorr": 0.96382128844005699, "MBE_uncorr": 0.36534345884057901, "r2_diff": 0.0016136664953327884, "MAE_diff": -0.064406751708747101, "MBE_diff": -0.1416825939450217 }, "geometry": { "type": "Point", "coordinates": [ -120.201004, 36.169669 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "LYS_NW", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SIMS", "r2_corr": 0.71394463515639339, "MAE_corr": 1.0712013769010575, "MBE_corr": -0.13521669669937181, "Latitude": 35.188135, "Longitude": -102.097929, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.70456128340452107, "MAE_uncorr": 1.0737592448272697, "MBE_uncorr": -0.093256060725333503, "r2_diff": 0.0093833517518723264, "MAE_diff": -0.002557867926212154, "MBE_diff": -0.041960635974038304 }, "geometry": { "type": "Point", "coordinates": [ -102.097929, 35.188135 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "LYS_SW", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "SIMS", "r2_corr": 0.82601302011959254, "MAE_corr": 1.1436629545762187, "MBE_corr": 0.39479464148361221, "Latitude": 35.1861, "Longitude": -102.097938, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.8218965012891507, "MAE_uncorr": 1.1471140545183918, "MBE_uncorr": 0.43343898705779871, "r2_diff": 0.0041165188304418399, "MAE_diff": -0.0034510999421730748, "MBE_diff": -0.038644345574186501 }, "geometry": { "type": "Point", "coordinates": [ -102.097938, 35.1861 ] } }
+]
+}

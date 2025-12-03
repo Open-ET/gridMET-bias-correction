@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "improved_sites",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_High", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "EEMETRIC", "r2_corr": 0.68254301028846165, "MAE_corr": 1.2387369012048104, "MBE_corr": 0.47173076909118988, "Latitude": 36.169669, "Longitude": -120.201004, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.69379028690984235, "MAE_uncorr": 1.2589089099933313, "MBE_uncorr": 0.62645456960291668, "r2_diff": -0.011247276621380697, "MAE_diff": -0.020172008788520879, "MBE_diff": -0.15472380051172679 }, "geometry": { "type": "Point", "coordinates": [ -120.201004, 36.169669 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "Almond_Med", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "EEMETRIC", "r2_corr": 0.73107427757882171, "MAE_corr": 1.4298637316252043, "MBE_corr": 0.80636415192886168, "Latitude": 36.177669, "Longitude": -120.20264499999899, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.74457899606468958, "MAE_uncorr": 1.4586602397766444, "MBE_uncorr": 0.96410217123075315, "r2_diff": -0.013504718485867873, "MAE_diff": -0.028796508151440081, "MBE_diff": -0.15773801930189146 }, "geometry": { "type": "Point", "coordinates": [ -120.202644999998995, 36.177669 ] } },
+{ "type": "Feature", "properties": { "SITE_ID": "US-xSL", "version": "v3", "corr_uncorr_type_corr": "corr", "flux_calc": "Closed", "openet_model": "EEMETRIC", "r2_corr": 0.1114445463019851, "MAE_corr": 1.13718905637134, "MBE_corr": 0.14742997236097219, "Latitude": 40.4619, "Longitude": -103.0293, "corr_uncorr_type_uncorr": "uncorr", "r2_uncorr": 0.1192865468467077, "MAE_uncorr": 1.1301129790019808, "MBE_uncorr": 0.1489136463796131, "r2_diff": -0.0078420005447226021, "MAE_diff": 0.0070760773693592238, "MBE_diff": -0.0014836740186409125 }, "geometry": { "type": "Point", "coordinates": [ -103.0293, 40.4619 ] } }
+]
+}
