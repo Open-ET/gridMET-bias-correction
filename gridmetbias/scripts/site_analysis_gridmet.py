@@ -260,63 +260,8 @@ def query_metrics(
     return improved_sites, improved_dir
 
 
-def download_conus_boundaries(output_dir: str) -> gpd.GeoDataFrame:
-    """
-    Download CONUS state boundaries from ESRI feature server.
-    
-    Args:
-        output_dir (str): Directory to save the downloaded shapefile
-        
-    Returns:
-        gpd.GeoDataFrame: CONUS state boundaries
-    """
-    import requests
-    import geopandas as gpd
-    from pathlib import Path
-    
-    # ESRI Feature Server URL
-    base_url = "https://services1.arcgis.com/cRvLdSPAsRupRo7I/arcgis/rest/services/US_State_Boundaries_(CONUS)/FeatureServer/0/query"
-    
-    # Parameters for the query
-    params = {
-        'where': '1=1',  # Get all features
-        'outFields': '*',  # Get all fields
-        'f': 'geojson',   # Return as GeoJSON
-        'returnGeometry': 'true'
-    }
-    
-    output_path = Path(output_dir) / "conus_boundaries.geojson"
-    
-    # Check if file already exists
-    if output_path.exists():
-        print(f"CONUS boundaries already exist at {output_path}")
-        return gpd.read_file(output_path)
-    
-    try:
-        print("Downloading CONUS boundaries from ESRI feature server...")
-        response = requests.get(base_url, params=params, timeout=30)
-        response.raise_for_status()
-        
-        # Save the GeoJSON response
-        with open(output_path, 'w') as f:
-            f.write(response.text)
-        
-        # Load as GeoDataFrame
-        gdf = gpd.read_file(output_path)
-        print(f"Successfully downloaded CONUS boundaries to {output_path}")
-        print(f"Downloaded {len(gdf)} state boundaries")
-        
-        return gdf
-        
-    except requests.exceptions.RequestException as e:
-        print(f"Error downloading CONUS boundaries: {e}")
-        return None
-    except Exception as e:
-        print(f"Error processing CONUS boundaries: {e}")
-        return None
-
-
 def create_us_map_improved_sites(
+        conus_shp: str,
         output_dir: str,
         metrics_df: pd.DataFrame
 ) -> None:
@@ -325,7 +270,7 @@ def create_us_map_improved_sites(
     Sites are prioritized as: All metrics (R2, MAE, MBE) > MBE > MAE > R2
     
     Args:
-        csv_dir (str): Directory containing the CSV files with gridMET data.
+        conus_shp (str): Path to the CONUS shapefile.
         output_dir (str): Directory to save the map.
         metrics_df (pd.DataFrame): DataFrame containing the metrics for each site and model.
     
@@ -333,10 +278,15 @@ def create_us_map_improved_sites(
         None
     """
     
-    # Download CONUS boundaries
-    conus_gdf = download_conus_boundaries(output_dir)
-    if conus_gdf is None:
-        print("Failed to download CONUS boundaries. Creating map without state boundaries.")
+    # Load CONUS boundaries from shapefile
+    try:
+        conus_gdf = gpd.read_file(conus_shp)
+        # only keep the lower 48 states
+        conus_gdf = conus_gdf[~conus_gdf['STATE_ABBR'].isin(['AK', 'HI'])]
+        conus_gdf = conus_gdf.to_crs("ESRI:102004")  # Albers Equal Area for CONUS
+    except Exception as e:
+        print(f"Failed to load CONUS boundaries from {conus_shp}: {e}")
+        print("Creating map without state boundaries.")
         conus_gdf = None
     else:
         conus_gdf = conus_gdf.to_crs("ESRI:102004")  # Albers Equal Area for CONUS
@@ -529,6 +479,7 @@ if __name__ == "__main__":
         'daily': "../../Plots/GridMET_Plots/All/GridMET_Daily_All_Station_Data.csv",
         'monthly': "../../Plots/GridMET_Plots/All/GridMET_Monthly_All_Station_Data.csv"
     }
+    conus_shp = '../../Data/states/states.shp'
 
     # Create US map showing all improved sites with different color codes
     for dt in gridmet_flux_csv_dict.keys():
@@ -538,6 +489,7 @@ if __name__ == "__main__":
             output_dir=output_directory
         )
         create_us_map_improved_sites(
+            conus_shp=conus_shp,
             output_dir=output_directory,
             metrics_df=metrics_df
         )
@@ -553,6 +505,7 @@ if __name__ == "__main__":
             openet_metrics_df.to_csv(common_output_dir / "OpenET_Common_Sites_Metrics.csv", index=False)
             for openet_model in openet_metrics_df['openet_model'].unique():
                 openet.create_us_map_improved_sites(
+                    conus_shp=conus_shp,
                     output_dir=common_output_dir,
                     metrics_df=openet_metrics_df,
                     openet_model=openet_model
@@ -561,6 +514,7 @@ if __name__ == "__main__":
             gridmet_metrics_df = metrics_df[metrics_df['SITE_ID'].isin(common_sites)]
             gridmet_metrics_df.to_csv(common_output_dir / "GridMET_Common_Sites_Metrics.csv", index=False)
             create_us_map_improved_sites(
+                conus_shp=conus_shp,
                 output_dir=common_output_dir,
                 metrics_df=gridmet_metrics_df
         )

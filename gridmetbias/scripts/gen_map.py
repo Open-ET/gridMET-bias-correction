@@ -53,8 +53,10 @@ fig, axes = plt.subplots(3, 1, figsize=(25, 36))
 
 geometry = [Point(xy) for xy in zip(df['Longitude'], df['Latitude'])]
 gdf_points = geopandas.GeoDataFrame(df[params_dict['var_name'].values()], geometry=geometry, crs="EPSG:4326")
-states = geopandas.read_file("../../Plots/Site_Analysis_GridMET/monthly/conus_boundaries.geojson")
-contiguous_states = states[~states['NAME'].isin(['Alaska', 'Hawaii', 'Puerto Rico'])]
+states = geopandas.read_file("../../Data/states/states.shp")
+contiguous_states = states[~states['STATE_ABBR'].isin(['AK', 'HI'])]
+contiguous_states = contiguous_states.to_crs("ESRI:102004")
+gdf_points = gdf_points.to_crs("ESRI:102004")
 
 for i in np.arange(3):
     ax = axes[i]
@@ -129,7 +131,8 @@ for i in np.arange(3):
     # Create a new legend with all 5 entries
     ax.legend(new_handles, new_labels, 
              title=params_dict['legend_title'][i],
-             loc="lower right",
+             loc="center left",
+             bbox_to_anchor=(1.02, 0.5),
              fontsize=22,
              title_fontsize=22)
 
@@ -138,10 +141,6 @@ for i in np.arange(3):
     ax.set_xlabel('Longitude ($^\\circ$)', fontsize=30)
     ax.set_ylabel('Latitude ($^\\circ$)', fontsize=30)
     ax.set_aspect('equal')
-
-    # Set map limits to focus on the contiguous US
-    ax.set_xlim(-125, -66.5)
-    ax.set_ylim(24, 50)
     
     # Properly set tick label font sizes
     ax.tick_params(axis='x', labelsize=20)

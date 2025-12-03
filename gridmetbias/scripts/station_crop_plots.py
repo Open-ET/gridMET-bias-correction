@@ -375,6 +375,12 @@ def make_station_cdl_plots(
             # Style KDE axis (left) - only keep left and bottom spines
             if var in ['TMax (C)', 'TMin (C)', 'TAvg (C)']:
                 var_unit_label = var.replace(' (C)', ' (°C)')
+            elif var in ['ETo (mm/day)', 'ETr (mm/day)']:
+                var_unit_label = var.replace(' (mm/day)', ' (mm day⁻¹)')
+            elif var in ['Measured Uz (m/s)', 'Uz at 2m (m/s)']:
+                var_unit_label = var.replace(' (m/s)', ' (m s⁻¹)')
+            elif var in ['Rs (w/m2)', 'Rso (w/m2)', 'Optimized TR Rs (w/m2)']:
+                var_unit_label = var.replace(' (w/m2)', ' (W m⁻²)')
             else:
                 var_unit_label = var
             ax_kde.set_ylabel(f'{var_unit_label}', fontsize=18)

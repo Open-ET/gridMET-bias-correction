@@ -377,6 +377,7 @@ def download_conus_boundaries(output_dir: str) -> gpd.GeoDataFrame:
 
 
 def create_us_map_improved_sites(
+        conus_shp: str,
         output_dir: str,
         metrics_df: pd.DataFrame,
         openet_model: str = 'ensemble_mean'
@@ -386,7 +387,7 @@ def create_us_map_improved_sites(
     Sites are prioritized as: All metrics (R2, MAE, MBE) > MBE > MAE > R2
     
     Args:
-        csv_dir (str): Directory containing the CSV files with OpenET data.
+        conus_shp (str): Path to the CONUS shapefile.
         output_dir (str): Directory to save the map.
         metrics_df (pd.DataFrame): DataFrame containing the metrics for each site and model.
         openet_model (str): The OpenET model to filter the metrics. Default is 'ensemble_mean'.
@@ -395,13 +396,16 @@ def create_us_map_improved_sites(
         None
     """
     
-    # Download CONUS boundaries
-    conus_gdf = download_conus_boundaries(output_dir)
-    if conus_gdf is None:
-        print("Failed to download CONUS boundaries. Creating map without state boundaries.")
-        conus_gdf = None
-    else:
+    # Load CONUS boundaries from shapefile
+    try:
+        conus_gdf = gpd.read_file(conus_shp)
+        # only keep the lower 48 states
+        conus_gdf = conus_gdf[~conus_gdf['STATE_ABBR'].isin(['AK', 'HI'])]
         conus_gdf = conus_gdf.to_crs("ESRI:102004")  # Albers Equal Area for CONUS
+    except Exception as e:
+        print(f"Failed to load CONUS boundaries from {conus_shp}: {e}")
+        print("Creating map without state boundaries.")
+        conus_gdf = None
     
     # Define metric combinations in priority order
     metric_combinations = [
@@ -595,6 +599,7 @@ if __name__ == "__main__":
     site_id = "All"  # Sites west of the 100th meridian
     csv_directory = "../../Data/paired_flux_OpenET_data"  # Replace with actual path to CSV
     station_metadata = "../../Data/flux_ET_dataset/station_metadata.xlsx"
+    conus_shp = '../../Data/states/states.shp'
     dt = ['daily', 'monthly']  # Data types to process
 
     for dt_type in dt:
@@ -616,6 +621,7 @@ if __name__ == "__main__":
             create_us_map_improved_sites(
                 output_dir=output_directory,
                 metrics_df=metrics_df,
-                openet_model=openet_model
+                openet_model=openet_model,
+                conus_shp=conus_shp
             )   
         
