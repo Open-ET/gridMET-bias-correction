@@ -2,11 +2,11 @@
 gridMET bias correction analysis
 
 ## Citations
-Volk, J. M., Dunkerly, C., Majumdar, S., Huntington, J. L., Minor, B. A., Kim, Y., Morton, C. G., Kilic, A., Melton, F., Allen, R. G., Pearson, C., & Purdy, A. J. (2025). 
-Assessing and Correcting Bias in Gridded Reference Evapotranspiration over Agricultural Lands Across the Contiguous United States. _Under review in Agricultural Water Management_.
+Volk, J. M., Dunkerly, C., Majumdar, S., Huntington, J. L., Minor, B. A., Kim, Y., Morton, C. G., ReVelle, P., Kilic, A., Melton, F., Allen, R. G., Pearson, C., & Purdy, A. J. (2025). 
+Assessing and Correcting Bias in Gridded Reference Evapotranspiration over Agricultural Lands Across the Contiguous United States. _In prep. for Agricultural Water Management_.
 
-Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., Kilic, A., Melton, F., & Purdy, A. J. (2025). 
-CONUS-AgWeather: A High-Quality Benchmark Daily Agricultural Weather Station Dataset for Meteorological Applications in the Contiguous United States. _Under review in Nature Scientific Data_.
+Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., & Purdy, A. J. (2025). 
+CONUS-AgWeather: A High-Quality Benchmark Daily Agricultural Weather Station Dataset for Meteorological Applications in the Contiguous United States. _In prep. for Nature Scientific Data_.
 
 ### 1. Download and install Anaconda/Miniconda
 Either [Anaconda](https://www.anaconda.com/products/individual) or [miniconda](https://docs.conda.io/en/latest/miniconda.html) is required for installing the Python 3 packages. 
