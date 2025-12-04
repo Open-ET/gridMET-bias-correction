@@ -13,12 +13,12 @@ var_names = ["eto_mm", "u2_ms", "etr_mm", "ea_kpa", "srad_wm2", "tmin_c", "tmax_
 
 def merge_data(var_name):
 	if var_name in ["eto_mm", "etr_mm"]:
-		bias_path = f"../Data/Point bias data/{var_name}_summary_comp_all_yrs.csv"
-		geojson_path = f"../Data/Point bias data/Climate/{var_name}_summary_comp_all_yrs_climate.geojson"
+		bias_path = f"../../Data/Point bias data/{var_name}_summary_comp_all_yrs.csv"
+		geojson_path = f"../../Data/Point bias data/Climate/{var_name}_summary_comp_all_yrs_climate.geojson"
 	else:
-		bias_path = f"../Data/Point bias data/{var_name}_summary_comp_merged.csv"
-		geojson_path = f"../Data/Point bias data/Climate/{var_name}_summary_comp_merged_climate.geojson"
-	koppen_info_path = "../Data/koppen_ID_info.csv"
+		bias_path = f"../../Data/Point bias data/{var_name}_summary_comp_merged.csv"
+		geojson_path = f"../../Data/Point bias data/Climate/{var_name}_summary_comp_merged_climate.geojson"
+	koppen_info_path = "../../Data/koppen_ID_info.csv"
 	
 	bias_data = pd.read_csv(bias_path)
 	climate_data = gpd.read_file(geojson_path)
@@ -35,7 +35,7 @@ def merge_data(var_name):
 		columns={'Code': 'Climate_Abbreviation', 'Description': 'Climate_Zone'}, inplace=True
 	)
 	# Save
-	output_path = f"../Data/Point bias data/Climate/{var_name}_merged_with_climate.csv"
+	output_path = f"../../Data/Point bias data/Climate/{var_name}_merged_with_climate.csv"
 	merged_data.to_csv(output_path, index=False)
 
 if __name__ == '__main__':

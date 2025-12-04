@@ -3,6 +3,7 @@ Main script for calculating biases in each weather station variable and making b
 and CSV files with statistics grouped by east/west U.S., and climate zones. Run this script
 after running "data_formatting.py"
 Author: Dr. John Volk (john.volk@dri.edu)
+Modified by: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
 """
 
 import pandas as pd
@@ -59,7 +60,7 @@ simplified_names = {
 }
 
 def generate_boxplots(var_name):
-    data_path = f"../Data/Point bias data/Climate/{var_name}_merged_with_climate.csv"
+    data_path = f".././Data/Point bias data/Climate/{var_name}_merged_with_climate.csv"
     merged_data = pd.read_csv(data_path)
 
     if var_name in ["tmin_c", "tmax_c"]:
@@ -67,7 +68,7 @@ def generate_boxplots(var_name):
     else:
         merged_data[plot_variable] = 1 / merged_data[plot_variable]  # gridMET bias (grid/station)
 
-    plots_folder = f"../Plots/Boxplots/{time_period_labels.get(plot_variable)}"
+    plots_folder = f"../../Plots/Boxplots/{time_period_labels.get(plot_variable)}"
     os.makedirs(plots_folder, exist_ok=True)
 
     # remap lumped zones
