@@ -1,4 +1,4 @@
-# gridMET_ETo
+# gridMET ETo bias correction
 gridMET bias correction analysis
 
 ## Citations
