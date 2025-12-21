@@ -32,11 +32,11 @@ params_dict = {
     'var_name': {0: 'etr_obs_count',
                  1: 'record_length',
                  2: 'Average Annual Completeness (%)'},
-    'legend_title': {0: 'Quality-controlled ETo observations',
-                     1: 'Years of ETo data',
+    'legend_title': {0: 'Quality-controlled weather observations',
+                     1: 'Years of weather observations',
                      2: 'Average coverage per year (%)'},
-    'title': {0: 'Number of ETo observations',
-              1: 'Years of ETo data',
+    'title': {0: 'Number of weather observations',
+              1: 'Years of weather observations',
               2: 'Average annual completeness (%) across record'},
     'label': {0: '(a)',
               1: '(b)',
@@ -62,6 +62,8 @@ gdf_points = gdf_points.to_crs("ESRI:102004")
 for i in np.arange(3):
     ax = axes[i]
     plt.rcParams.update({'font.size': 22})
+    plt.rcParams['font.family'] = 'serif'
+    plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
     contiguous_states.plot(ax=ax, color='#e3e3e3', edgecolor='black')
     
     # Create discrete colormap with exactly 5 colors
@@ -134,13 +136,14 @@ for i in np.arange(3):
              title=params_dict['legend_title'][i],
              loc="center left",
              bbox_to_anchor=(1.02, 0.5),
-             fontsize=22,
-             title_fontsize=22)
+             fontsize=30,
+             frameon=False,
+             title_fontsize=30)
 
     # Customize the plot
     ax.set_title(params_dict['label'][i], fontdict={'fontsize': '30', 'fontweight': 'bold'})
-    ax.set_xlabel('Longitude ($^\\circ$)', fontsize=30)
-    ax.set_ylabel('Latitude ($^\\circ$)', fontsize=30)
+    # ax.set_xlabel('Longitude', fontsize=30)
+    # ax.set_ylabel('Latitude', fontsize=30)
     ax.set_aspect('equal')
     
     # Properly set tick label font sizes
