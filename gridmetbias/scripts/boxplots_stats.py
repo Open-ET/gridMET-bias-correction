@@ -60,7 +60,7 @@ simplified_names = {
 }
 
 def generate_boxplots(var_name):
-    data_path = f".././Data/Point bias data/Climate/{var_name}_merged_with_climate.csv"
+    data_path = f"../../Data/Point bias data/Climate/{var_name}_merged_with_climate.csv"
     merged_data = pd.read_csv(data_path)
 
     if var_name in ["tmin_c", "tmax_c"]:

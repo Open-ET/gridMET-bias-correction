@@ -32,12 +32,9 @@ params_dict = {
     'var_name': {0: 'etr_obs_count',
                  1: 'record_length',
                  2: 'Average Annual Completeness (%)'},
-    'legend_title': {0: 'Quality-controlled weather observations',
+    'legend_title': {0: 'Days of weather observations',
                      1: 'Years of weather observations',
-                     2: 'Average coverage per year (%)'},
-    'title': {0: 'Number of weather observations',
-              1: 'Years of weather observations',
-              2: 'Average annual completeness (%) across record'},
+                     2: 'Average annual record completeness (%)'},
     'label': {0: '(a)',
               1: '(b)',
               2: '(c)'},
@@ -107,7 +104,7 @@ for i in np.arange(3):
         edgecolors='black',
         linewidth=0.5,
         legend=False,
-        categorical=True  # Ensure categorical plotting
+        categorical=True  # Ensure categorical plotting     
     )
 
     # Create custom legend with all 5 colors and labels
@@ -135,7 +132,7 @@ for i in np.arange(3):
     ax.legend(new_handles, new_labels, 
              title=params_dict['legend_title'][i],
              loc="center left",
-             bbox_to_anchor=(1.02, 0.5),
+             bbox_to_anchor=(0.9, 0.5),
              fontsize=30,
              frameon=False,
              title_fontsize=30)
@@ -146,43 +143,49 @@ for i in np.arange(3):
     # ax.set_ylabel('Latitude', fontsize=30)
     ax.set_aspect('equal')
     
+    # Remove subplot frames and ticks
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    
     # Properly set tick label font sizes
-    ax.tick_params(axis='x', labelsize=20)
-    ax.tick_params(axis='y', labelsize=20)
+    # ax.tick_params(axis='x', labelsize=20)
+    # ax.tick_params(axis='y', labelsize=20)
 
     # Get current axis limits in projected coordinates
-    xlim = ax.get_xlim()
-    ylim = ax.get_ylim()
+    # xlim = ax.get_xlim()
+    # ylim = ax.get_ylim()
     
     # Create transformer from projected CRS back to WGS84
-    transformer = Transformer.from_crs("ESRI:102004", "EPSG:4326", always_xy=True)
+    #transformer = Transformer.from_crs("ESRI:102004", "EPSG:4326", always_xy=True)
     
     # Generate tick positions in projected coordinates
-    x_ticks_proj = np.linspace(xlim[0], xlim[1], 5)
-    y_ticks_proj = np.linspace(ylim[0], ylim[1], 5)
+    # x_ticks_proj = np.linspace(xlim[0], xlim[1], 5)
+    # y_ticks_proj = np.linspace(ylim[0], ylim[1], 5)
     
-    # Transform to lat/lon for labels (use center y for x-ticks, center x for y-ticks)
-    center_y = (ylim[0] + ylim[1]) / 2
-    center_x = (xlim[0] + xlim[1]) / 2
+    # # Transform to lat/lon for labels (use center y for x-ticks, center x for y-ticks)
+    # center_y = (ylim[0] + ylim[1]) / 2
+    # center_x = (xlim[0] + xlim[1]) / 2
     
-    x_labels = []
-    for x in x_ticks_proj:
-        lon, lat = transformer.transform(x, center_y)
-        x_labels.append(f'{lon:.0f}°')
+    # x_labels = []
+    # for x in x_ticks_proj:
+    #     lon, lat = transformer.transform(x, center_y)
+    #     x_labels.append(f'{lon:.0f}°')
     
-    y_labels = []
-    for y in y_ticks_proj:
-        lon, lat = transformer.transform(center_x, y)
-        y_labels.append(f'{lat:.0f}°')
+    # y_labels = []
+    # for y in y_ticks_proj:
+    #     lon, lat = transformer.transform(center_x, y)
+    #     y_labels.append(f'{lat:.0f}°')
     
-    ax.set_xticks(x_ticks_proj)
-    ax.set_xticklabels(x_labels)
-    ax.set_yticks(y_ticks_proj)
-    ax.set_yticklabels(y_labels)
+    # ax.set_xticks(x_ticks_proj)
+    # ax.set_xticklabels(x_labels)
+    # ax.set_yticks(y_ticks_proj)
+    # ax.set_yticklabels(y_labels)
     
-    # Properly set tick label font sizes
-    ax.tick_params(axis='x', labelsize=20)
-    ax.tick_params(axis='y', labelsize=20)
+    # # Properly set tick label font sizes
+    # ax.tick_params(axis='x', labelsize=20)
+    # ax.tick_params(axis='y', labelsize=20)
 
 # Save the figure
 plt.tight_layout()

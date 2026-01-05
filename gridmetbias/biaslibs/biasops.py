@@ -1584,7 +1584,10 @@ def gridmet_bias_comp_analysis(
                     _, axes = plt.subplots(nrows=4, ncols=3, figsize=(15, 20), sharey=True)
                     for ax, month in zip(axes.flatten(), months):
                         month_data = data_df[data_df['Month'] == month]
-                        month_corr = month_data[month_data[new_hue_col] == 'Corrected']
+                        month_data[new_hue_col] = month_data[new_hue_col].replace({
+                            'Corrected': 'Bias-corrected'
+                        })
+                        month_corr = month_data[month_data[new_hue_col] == 'Bias-corrected']
                         month_uncorr = month_data[month_data[new_hue_col] == 'Uncorrected']
                         r2_corr = np.corrcoef(month_corr[station_et_col], month_corr[gridmet_col])[0, 1] ** 2
                         r2_uncorr = np.corrcoef(month_uncorr[station_et_col], month_uncorr[gridmet_col])[0, 1] ** 2
@@ -1599,7 +1602,7 @@ def gridmet_bias_comp_analysis(
                             hue=new_hue_col,
                             ax=ax,
                             alpha=0.2,
-                            palette={'Uncorrected': 'red', 'Corrected': 'blue'},
+                            palette={'Uncorrected': 'red', 'Bias-corrected': 'blue'},
                             legend=True if month == 1 else False,
                         )
                         text_posx = 5
@@ -1615,8 +1618,8 @@ def gridmet_bias_comp_analysis(
                             text_posy_uncorr = max_x * 0.18
                             text_posy_corr = max_x * 0.08
                         ax.set_title(calendar.month_name[month])
-                        ax.set_xlabel('Station ETo (mm/month)')
-                        ax.set_ylabel('gridMET ETo (mm/month)')
+                        ax.set_xlabel('Station ETo (mm month⁻¹)')
+                        ax.set_ylabel('gridMET ETo (mm month⁻¹)')
                         ax.set_xlim(-0.5, max_x)
                         ax.set_ylim(-0.5, max_x)
                         ax.plot([0, max_x], [0, max_x], color='k', linestyle='--')
