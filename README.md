@@ -1,5 +1,5 @@
-# gridMET_ETo
-gridMET bias correction analysis
+# gridMET bias correction and CONUS-AgWeather
+gridMET bias correction and CONUS-AgWeather papers' code and plots.
 
 ## Disk Space Requirements
 
