@@ -166,5 +166,6 @@ cython_debug/
 #.idea/
 .DS_Store
 __pycache__
-Data/
+Data/*
+!Data/README.md
 Plots/GridMET_Plots/**/*Daily*.csv

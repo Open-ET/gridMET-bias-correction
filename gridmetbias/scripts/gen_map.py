@@ -12,181 +12,144 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib
 from matplotlib.lines import Line2D
-from pyproj import Transformer
 
-# Read data first to check actual ranges
-df = pd.read_csv("../../Data/openet_ground_station_master_list_cleaned_v4.csv")
-df = df.loc[df['included'] == True]
 
-# Check actual data ranges to set appropriate bins
-print("Actual data ranges:")
-print(f"etr_obs_count: {df['etr_obs_count'].min():.0f} - {df['etr_obs_count'].max():.0f}")
-print(f"record_length: {df['record_length'].min():.0f} - {df['record_length'].max():.0f}")
-print(f"Average Annual Completeness (%): {df['Average Annual Completeness (%)'].min():.1f} - {df['Average Annual Completeness (%)'].max():.1f}")
+if __name__ == "__main__":
+    # Read data first to check actual ranges
+    df = pd.read_csv("../../Data/openet_ground_station_master_list_cleaned_v4.csv")
+    df = df.loc[df['included'] == True]
 
-# Count how many points are below 3000
-below_3000 = (df['etr_obs_count'] < 3000).sum()
-print(f"Points below 3000 observations: {below_3000}")
+    # Check actual data ranges to set appropriate bins
+    print("Actual data ranges:")
+    print(f"etr_obs_count: {df['etr_obs_count'].min():.0f} - {df['etr_obs_count'].max():.0f}")
+    print(f"record_length: {df['record_length'].min():.0f} - {df['record_length'].max():.0f}")
+    print(f"Average Annual Completeness (%): {df['Average Annual Completeness (%)'].min():.1f} - {df['Average Annual Completeness (%)'].max():.1f}")
 
-params_dict = {
-    'var_name': {0: 'etr_obs_count',
-                 1: 'record_length',
-                 2: 'Average Annual Completeness (%)'},
-    'legend_title': {0: 'Days of weather observations',
-                     1: 'Years of weather observations',
-                     2: 'Average annual record completeness (%)'},
-    'label': {0: '(a)',
-              1: '(b)',
-              2: '(c)'},
-    'cmap': {0: 'prism_r', 1: 'prism_r', 2: 'prism_r'},
-    # Use actual minimum values to ensure all data is captured
-    'custom_bins': {0: [400, 3000, 6000, 9000, 12000, 15000],  # Start from a round number
-                    1: [1, 5, 10, 15, 20, 25],
-                    2: [40, 70, 80, 90, 95, 100]}
-}
+    # Count how many points are below 3000
+    below_3000 = (df['etr_obs_count'] < 3000).sum()
+    print(f"Points below 3000 observations: {below_3000}")
 
-print(f"Using bins for observations: {params_dict['custom_bins'][0]}")
+    params_dict = {
+        'var_name': {0: 'etr_obs_count',
+                    1: 'record_length',
+                    2: 'Average Annual Completeness (%)'},
+        'legend_title': {0: 'Days of weather observations',
+                        1: 'Years of weather observations',
+                        2: 'Average annual record completeness (%)'},
+        'label': {0: '(a)',
+                1: '(b)',
+                2: '(c)'},
+        'cmap': {0: 'prism_r', 1: 'prism_r', 2: 'prism_r'},
+        # Use actual minimum values to ensure all data is captured
+        'custom_bins': {0: [400, 3000, 6000, 9000, 12000, 15000],  # Start from a round number
+                        1: [1, 5, 10, 15, 20, 25],
+                        2: [40, 70, 80, 90, 95, 100]}
+    }
 
-fig, axes = plt.subplots(3, 1, figsize=(25, 36))
+    print(f"Using bins for observations: {params_dict['custom_bins'][0]}")
 
-geometry = [Point(xy) for xy in zip(df['Longitude'], df['Latitude'])]
-gdf_points = geopandas.GeoDataFrame(df[params_dict['var_name'].values()], geometry=geometry, crs="EPSG:4326")
-states = geopandas.read_file("../../Data/states/states.shp")
-contiguous_states = states[~states['STATE_ABBR'].isin(['AK', 'HI'])]
-contiguous_states = contiguous_states.to_crs("ESRI:102004")
-gdf_points = gdf_points.to_crs("ESRI:102004")
+    fig, axes = plt.subplots(3, 1, figsize=(25, 36))
 
-for i in np.arange(3):
-    ax = axes[i]
-    plt.rcParams.update({'font.size': 22})
-    plt.rcParams['font.family'] = 'serif'
-    plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
-    contiguous_states.plot(ax=ax, color='#e3e3e3', edgecolor='black')
-    
-    # Create discrete colormap with exactly 5 colors
-    base_cmap = matplotlib.colormaps.get_cmap(params_dict['cmap'][i])
-    colors = [base_cmap(j/4) for j in range(5)]  # 5 evenly spaced colors
-    discrete_cmap = mcolors.ListedColormap(colors)
-    
-    # Debug: Print classification for first subplot
-    if i == 0:
-        print(f"\nClassification for subplot {i}:")
-        bins = params_dict['custom_bins'][i]
-        for j in range(len(bins)-1):
-            if j == 0:
-                # First bin: anything less than the second bin value
-                count = (gdf_points[params_dict['var_name'][i]] < bins[j+1]).sum()
-                print(f"Bin < {bins[j+1]:.0f}: {count} points")
-            else:
-                count = ((gdf_points[params_dict['var_name'][i]] >= bins[j]) & 
-                        (gdf_points[params_dict['var_name'][i]] < bins[j+1])).sum()
-                if j == len(bins)-2:  # Last bin includes upper bound
+    geometry = [Point(xy) for xy in zip(df['Longitude'], df['Latitude'])]
+    gdf_points = geopandas.GeoDataFrame(df[params_dict['var_name'].values()], geometry=geometry, crs="EPSG:4326")
+    states = geopandas.read_file("../../Data/states/states.shp")
+    contiguous_states = states[~states['STATE_ABBR'].isin(['AK', 'HI'])]
+    contiguous_states = contiguous_states.to_crs("ESRI:102004")
+    gdf_points = gdf_points.to_crs("ESRI:102004")
+
+    for i in np.arange(3):
+        ax = axes[i]
+        plt.rcParams.update({'font.size': 22})
+        plt.rcParams['font.family'] = 'serif'
+        plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
+        contiguous_states.plot(ax=ax, color='#e3e3e3', edgecolor='black')
+        
+        # Create discrete colormap with exactly 5 colors
+        base_cmap = matplotlib.colormaps.get_cmap(params_dict['cmap'][i])
+        colors = [base_cmap(j/4) for j in range(5)]  # 5 evenly spaced colors
+        discrete_cmap = mcolors.ListedColormap(colors)
+        
+        # Debug: Print classification for first subplot
+        if i == 0:
+            print(f"\nClassification for subplot {i}:")
+            bins = params_dict['custom_bins'][i]
+            for j in range(len(bins)-1):
+                if j == 0:
+                    # First bin: anything less than the second bin value
+                    count = (gdf_points[params_dict['var_name'][i]] < bins[j+1]).sum()
+                    print(f"Bin < {bins[j+1]:.0f}: {count} points")
+                else:
                     count = ((gdf_points[params_dict['var_name'][i]] >= bins[j]) & 
-                            (gdf_points[params_dict['var_name'][i]] <= bins[j+1])).sum()
-                print(f"Bin {bins[j]:.0f} to {bins[j+1]:.0f}: {count} points")
-    
-    # Create a categorical column for better control over classification
-    data_col = gdf_points[params_dict['var_name'][i]]
-    bins = params_dict['custom_bins'][i]
-    
-    # Create categorical labels
-    categorical = pd.cut(data_col, bins=bins, labels=False, include_lowest=True)
-    gdf_points[f'{params_dict["var_name"][i]}_cat'] = categorical
-    
-    # Plot with categorical data
-    gdf_points.plot(
-        ax=ax,
-        column=f'{params_dict["var_name"][i]}_cat',
-        cmap=discrete_cmap,
-        marker='o',
-        markersize=80,
-        alpha=0.9,
-        edgecolors='black',
-        linewidth=0.5,
-        legend=False,
-        categorical=True  # Ensure categorical plotting     
-    )
-
-    # Create custom legend with all 5 colors and labels
-    custom_bins = params_dict['custom_bins'][i]
-    new_labels = []
-    new_handles = []
-    num_intervals = len(custom_bins) - 1
-    
-    for idx in range(num_intervals):
-        start_val = int(custom_bins[idx])
-        end_val = int(custom_bins[idx + 1])
+                            (gdf_points[params_dict['var_name'][i]] < bins[j+1])).sum()
+                    if j == len(bins)-2:  # Last bin includes upper bound
+                        count = ((gdf_points[params_dict['var_name'][i]] >= bins[j]) & 
+                                (gdf_points[params_dict['var_name'][i]] <= bins[j+1])).sum()
+                    print(f"Bin {bins[j]:.0f} to {bins[j+1]:.0f}: {count} points")
         
-        if i == 0:  # Observation count - use comma notation and special handling for first bin
-            new_text = f'{start_val:,} – {end_val:,}'
-        else:  # Years and completeness - no commas needed for smaller numbers
-            new_text = f'{start_val} – {end_val}'
+        # Create a categorical column for better control over classification
+        data_col = gdf_points[params_dict['var_name'][i]]
+        bins = params_dict['custom_bins'][i]
         
-        new_labels.append(new_text)
-        # Create a circular marker (dot) with the corresponding color
-        new_handles.append(Line2D([0], [0], marker='o', color='w', 
-                                markerfacecolor=colors[idx], markersize=15,
-                                alpha=0.9))
-    
-    # Create a new legend with all 5 entries
-    ax.legend(new_handles, new_labels, 
-             title=params_dict['legend_title'][i],
-             loc="center left",
-             bbox_to_anchor=(0.9, 0.5),
-             fontsize=30,
-             frameon=False,
-             title_fontsize=30)
+        # Create categorical labels
+        categorical = pd.cut(data_col, bins=bins, labels=False, include_lowest=True)
+        gdf_points[f'{params_dict["var_name"][i]}_cat'] = categorical
+        
+        # Plot with categorical data
+        gdf_points.plot(
+            ax=ax,
+            column=f'{params_dict["var_name"][i]}_cat',
+            cmap=discrete_cmap,
+            marker='o',
+            markersize=80,
+            alpha=0.9,
+            edgecolors='black',
+            linewidth=0.5,
+            legend=False,
+            categorical=True  # Ensure categorical plotting     
+        )
 
-    # Customize the plot
-    ax.set_title(params_dict['label'][i], fontdict={'fontsize': '30', 'fontweight': 'bold'})
-    # ax.set_xlabel('Longitude', fontsize=30)
-    # ax.set_ylabel('Latitude', fontsize=30)
-    ax.set_aspect('equal')
-    
-    # Remove subplot frames and ticks
-    ax.set_xticks([])
-    ax.set_yticks([])
-    for spine in ax.spines.values():
-        spine.set_visible(False)
-    
-    # Properly set tick label font sizes
-    # ax.tick_params(axis='x', labelsize=20)
-    # ax.tick_params(axis='y', labelsize=20)
+        # Create custom legend with all 5 colors and labels
+        custom_bins = params_dict['custom_bins'][i]
+        new_labels = []
+        new_handles = []
+        num_intervals = len(custom_bins) - 1
+        
+        for idx in range(num_intervals):
+            start_val = int(custom_bins[idx])
+            end_val = int(custom_bins[idx + 1])
+            
+            if i == 0:  # Observation count - use comma notation and special handling for first bin
+                new_text = f'{start_val:,} – {end_val:,}'
+            else:  # Years and completeness - no commas needed for smaller numbers
+                new_text = f'{start_val} – {end_val}'
+            
+            new_labels.append(new_text)
+            # Create a circular marker (dot) with the corresponding color
+            new_handles.append(Line2D([0], [0], marker='o', color='w', 
+                                    markerfacecolor=colors[idx], markersize=15,
+                                    alpha=0.9))
+        
+        # Create a new legend with all 5 entries
+        ax.legend(new_handles, new_labels, 
+                title=params_dict['legend_title'][i],
+                loc="center left",
+                bbox_to_anchor=(0.9, 0.5),
+                fontsize=30,
+                frameon=False,
+                title_fontsize=30)
 
-    # Get current axis limits in projected coordinates
-    # xlim = ax.get_xlim()
-    # ylim = ax.get_ylim()
-    
-    # Create transformer from projected CRS back to WGS84
-    #transformer = Transformer.from_crs("ESRI:102004", "EPSG:4326", always_xy=True)
-    
-    # Generate tick positions in projected coordinates
-    # x_ticks_proj = np.linspace(xlim[0], xlim[1], 5)
-    # y_ticks_proj = np.linspace(ylim[0], ylim[1], 5)
-    
-    # # Transform to lat/lon for labels (use center y for x-ticks, center x for y-ticks)
-    # center_y = (ylim[0] + ylim[1]) / 2
-    # center_x = (xlim[0] + xlim[1]) / 2
-    
-    # x_labels = []
-    # for x in x_ticks_proj:
-    #     lon, lat = transformer.transform(x, center_y)
-    #     x_labels.append(f'{lon:.0f}°')
-    
-    # y_labels = []
-    # for y in y_ticks_proj:
-    #     lon, lat = transformer.transform(center_x, y)
-    #     y_labels.append(f'{lat:.0f}°')
-    
-    # ax.set_xticks(x_ticks_proj)
-    # ax.set_xticklabels(x_labels)
-    # ax.set_yticks(y_ticks_proj)
-    # ax.set_yticklabels(y_labels)
-    
-    # # Properly set tick label font sizes
-    # ax.tick_params(axis='x', labelsize=20)
-    # ax.tick_params(axis='y', labelsize=20)
+        # Customize the plot
+        ax.set_title(params_dict['label'][i], fontdict={'fontsize': '30', 'fontweight': 'bold'})
+        # ax.set_xlabel('Longitude', fontsize=30)
+        # ax.set_ylabel('Latitude', fontsize=30)
+        ax.set_aspect('equal')
+        
+        # Remove subplot frames and ticks
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(False)
 
-# Save the figure
-plt.tight_layout()
-plt.savefig(f'../../Plots/station_map_conus_agweather.png', dpi=600, bbox_inches='tight', facecolor='white')
+    # Save the figure
+    plt.tight_layout()
+    plt.savefig(f'../../Plots/station_map_conus_agweather.png', dpi=600, bbox_inches='tight', facecolor='white')

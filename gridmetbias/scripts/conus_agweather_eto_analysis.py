@@ -1172,16 +1172,16 @@ def main(load_existing=True):
     n_stations = daily_df_climate['station_id'].nunique()
     print(f"Number of unique stations in analysis: {n_stations}")
     
-    print("\nGenerating climate-based ETo ratio histograms and violin plots...")
-    plot_eto_ratio_climate_histogram_violin(daily_df_climate, annual_df_climate, n_stations)
+    # print("\nGenerating climate-based ETo ratio histograms and violin plots...")
+    # plot_eto_ratio_climate_histogram_violin(daily_df_climate, annual_df_climate, n_stations)
     
-    # Generate QC effect distribution plots (excluding ratio=1 to highlight QC effect)
-    print("\nGenerating QC effect distribution plots (excluding no-correction records)...")
-    plot_qc_effect_distribution(daily_df_climate, annual_df_climate, exclude_ratio_one=True)
+    # # Generate QC effect distribution plots (excluding ratio=1 to highlight QC effect)
+    # print("\nGenerating QC effect distribution plots (excluding no-correction records)...")
+    # plot_qc_effect_distribution(daily_df_climate, annual_df_climate, exclude_ratio_one=True)
     
-    # Generate QC effect plots by climate zone
-    print("\nGenerating QC effect plots by climate zone...")
-    plot_qc_effect_by_climate(daily_df_climate, annual_df_climate, exclude_ratio_one=True)
+    # # Generate QC effect plots by climate zone
+    # print("\nGenerating QC effect plots by climate zone...")
+    # plot_qc_effect_by_climate(daily_df_climate, annual_df_climate, exclude_ratio_one=True)
     
     # Generate combined histogram + violin plots for QC effect (excluding ratio=1)
     print("\nGenerating combined histogram + climate violin plots for QC effect...")

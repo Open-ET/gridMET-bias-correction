@@ -1,4 +1,4 @@
-# Plot station variables grouped by CDL crop type
+# Plot station variables grouped by CDL crop type. This script was not used in the CONUS-AgWeather paper.
 # author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
 
 import pandas as pd

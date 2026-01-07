@@ -4,7 +4,6 @@ Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
 """
 
 import pandas as pd
-import re
 import geopandas as gpd
 import seaborn as sns
 import calendar
@@ -12,12 +11,13 @@ import os
 import zipfile
 import matplotlib.pyplot as plt
 import numpy as np
+import warnings
 from scipy.stats import pearsonr
 from matplotlib.ticker import FuncFormatter
-from xarray import corr
 from .geeops import get_irr_crop_data
 from glob import glob
 from sklearn.metrics import mean_absolute_error
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 
 def correlation_matrix_with_pvalues(
@@ -939,7 +939,7 @@ def plot_ag_bias_distributions(
     """
     Plot the distribution of the bias ratios for the reference ET and other
     variables based on the NLCD agriculture fractions and climate 
-    classifications.
+    classifications. This method is not used in the bias correction study.
 
     Args:
         et_files: A list of file paths to the reference ET data.
@@ -1583,7 +1583,7 @@ def gridmet_bias_comp_analysis(
                     months = sorted(data_df['Month'].unique())
                     _, axes = plt.subplots(nrows=4, ncols=3, figsize=(15, 20), sharey=True)
                     for ax, month in zip(axes.flatten(), months):
-                        month_data = data_df[data_df['Month'] == month]
+                        month_data = data_df[data_df['Month'] == month].copy()
                         month_data[new_hue_col] = month_data[new_hue_col].replace({
                             'Corrected': 'Bias-corrected'
                         })
@@ -1618,8 +1618,8 @@ def gridmet_bias_comp_analysis(
                             text_posy_uncorr = max_x * 0.18
                             text_posy_corr = max_x * 0.08
                         ax.set_title(calendar.month_name[month])
-                        ax.set_xlabel('Station ETo (mm month⁻¹)')
-                        ax.set_ylabel('gridMET ETo (mm month⁻¹)')
+                        ax.set_xlabel('Station ETo (mm/month)')
+                        ax.set_ylabel('gridMET ETo (mm/month)')
                         ax.set_xlim(-0.5, max_x)
                         ax.set_ylim(-0.5, max_x)
                         ax.plot([0, max_x], [0, max_x], color='k', linestyle='--')
