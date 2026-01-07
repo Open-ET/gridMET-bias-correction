@@ -105,14 +105,14 @@ The `Data/` directory contains input datasets and analysis outputs. Key contents
 
 | Directory | Description | Status |
 |-----------|-------------|--------|
-| `Point bias data/` | Station-level bias ratio summaries | Included |
-| `flux_data/` | GridMET reference ET data | Included |
-| `flux_ET_dataset/` | Flux tower ET observations | Included |
-| `paired_flux_OpenET_data/` | Merged flux and OpenET data | Included |
-| `climateClass_poly_diss/` | Köppen climate zone shapefiles | Included |
-| `states/` | US state boundaries | Extract from `states.zip` |
+| `Point bias data/` | Station-level bias ratio summaries | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
+| `flux_data/` | GridMET reference ET data | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
+| `flux_ET_dataset/` | Flux tower ET observations | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
+| `paired_flux_OpenET_data/` | Merged flux and OpenET data | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
+| `climateClass_poly_diss/` | Köppen climate zone shapefiles | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
+| `states/` | US state boundaries | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
 | `CONUS-AgWeather_v1/` | QC'd weather station data (~5.7 GB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
-| `supporting_files/` | Climate/CDL parquet files (~1.3 GB) | External |
+| `supporting_files/` | Climate/CDL parquet files (~1.3 GB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
 
 See [Data/README.md](Data/README.md) for complete file descriptions and script requirements.
 
