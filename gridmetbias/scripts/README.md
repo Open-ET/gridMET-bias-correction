@@ -308,27 +308,20 @@ Plots/
 
 For a complete analysis workflow, run scripts in the following order:
 
-1. **Data Preparation:**
+1. **Data Preparation and Visualization for gridMET bias correction paper:**
    - `data_formatting.py` - Merge bias data with climate zones
-
-2. **Visualization:**
-   - `gen_map.py` - Generate station location maps
    - `boxplots_stats.py` - Create bias boxplots and statistics
-
-3. **CONUS-AgWeather Analysis:**
-   - `conus_agweather_var_analysis.py` - Analyze individual variables
-   - `conus_agweather_eto_analysis.py` - Analyze ETo specifically
-
-4. **Site-Level Analysis:**
    - `site_analysis_gridmet_openet.py` - Merge GridMET and OpenET data
    - `site_analysis_gridmet.py` - GridMET site analysis
    - `site_analysis_openet.py` - OpenET site analysis
-
-5. **Grouped Analyses:**
-   - `station_climate_plots.py` - Climate-grouped plots
-   - `station_crop_plots.py` - Crop-type-grouped plots (optional)
    - `OpenET_flux_grouped_scatter_plots.py` - Regional scatter plots
 
+2. **CONUS-AgWeather Visualization and Analysis:**
+   - `gen_map.py` - Generate station location maps
+   - `station_climate_plots.py` - Climate-grouped plots
+   - `station_crop_plots.py` - Crop-type-grouped plots (optional)
+   - `conus_agweather_var_analysis.py` - Analyze individual variables
+   - `conus_agweather_eto_analysis.py` - Analyze ETo specifically
 ---
 
 ## Required Python Packages
