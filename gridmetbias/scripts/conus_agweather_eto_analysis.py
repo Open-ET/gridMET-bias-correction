@@ -433,6 +433,608 @@ def plot_eto_ratio_climate_histogram_violin(daily_df, annual_df, n_stations):
     print(f"Annual climate plot saved to {PLOT_DIR / 'ETo_QC_Ratio_Annual_Climate_Violin.png'}")
 
 
+def plot_qc_effect_distribution(daily_df, annual_df, exclude_ratio_one=True):
+    """
+    Create distribution plots showing the effect of QC on ETo values.
+    
+    Plots show percent change between post-QC and pre-QC ETo values,
+    optionally excluding days/years where no correction was applied (ratio=1).
+    
+    Args:
+        daily_df: DataFrame with daily QC factors (must have 'ratio_post_pre' column)
+        annual_df: DataFrame with annual QC factors (must have 'annual_ratio_post_pre' column)
+        exclude_ratio_one: If True, exclude records where ratio equals 1 (no correction)
+    """
+    # Calculate percent change
+    daily_df = daily_df.copy()
+    annual_df = annual_df.copy()
+    daily_df['pct_diff'] = (daily_df['ratio_post_pre'] - 1) * 100
+    annual_df['pct_diff'] = (annual_df['annual_ratio_post_pre'] - 1) * 100
+    
+    # Store original counts
+    daily_total = len(daily_df)
+    annual_total = len(annual_df)
+    daily_ratio_one = (daily_df['ratio_post_pre'] == 1).sum()
+    annual_ratio_one = (annual_df['annual_ratio_post_pre'] == 1).sum()
+    
+    # Filter out ratio == 1 if requested
+    if exclude_ratio_one:
+        daily_filtered = daily_df[daily_df['ratio_post_pre'] != 1].copy()
+        annual_filtered = annual_df[annual_df['annual_ratio_post_pre'] != 1].copy()
+    else:
+        daily_filtered = daily_df.copy()
+        annual_filtered = annual_df.copy()
+    
+    # Trim to 1st-99th percentile for visualization
+    daily_p1, daily_p99 = daily_filtered['pct_diff'].quantile([0.01, 0.99])
+    annual_p1, annual_p99 = annual_filtered['pct_diff'].quantile([0.01, 0.99])
+    
+    daily_trimmed = daily_filtered[(daily_filtered['pct_diff'] >= daily_p1) & 
+                                   (daily_filtered['pct_diff'] <= daily_p99)]
+    annual_trimmed = annual_filtered[(annual_filtered['pct_diff'] >= annual_p1) & 
+                                     (annual_filtered['pct_diff'] <= annual_p99)]
+    
+    # Create figure with 2x2 subplots
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    
+    # Color palette
+    colors = {'all': '#1f77b4', 'filtered': '#ff7f0e', 'trimmed': '#2ca02c'}
+    
+    # --- Daily plots ---
+    # Left: All data vs filtered (histogram)
+    ax1 = axes[0, 0]
+    ax1.hist(daily_df['pct_diff'].clip(-50, 50), bins=100, alpha=0.5, 
+             label=f'All data (n={daily_total:,})', color=colors['all'], density=True)
+    ax1.hist(daily_filtered['pct_diff'].clip(-50, 50), bins=100, alpha=0.5, 
+             label=f'Excluding ratio=1 (n={len(daily_filtered):,})', color=colors['filtered'], density=True)
+    ax1.axvline(x=0, color='red', linestyle='--', linewidth=1, alpha=0.7)
+    ax1.set_xlabel('QC Percent Change (%)', fontsize=11)
+    ax1.set_ylabel('Density', fontsize=11)
+    ax1.set_title('Daily QC Effect: All Data vs Excluding No-Correction Days', fontsize=12, fontweight='bold')
+    ax1.legend(loc='upper right')
+    ax1.set_xlim(-50, 50)
+    
+    # Right: Filtered and trimmed (cleaner view)
+    ax2 = axes[0, 1]
+    ax2.hist(daily_trimmed['pct_diff'], bins=100, alpha=0.7, color=colors['trimmed'], 
+             density=True, edgecolor='white', linewidth=0.3)
+    ax2.axvline(x=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7, label='No change')
+    ax2.axvline(x=daily_trimmed['pct_diff'].median(), color='black', linestyle='-', linewidth=1.5, 
+                label=f'Median: {daily_trimmed["pct_diff"].median():.2f}%')
+    ax2.set_xlabel('QC Percent Change (%)', fontsize=11)
+    ax2.set_ylabel('Density', fontsize=11)
+    ax2.set_title(f'Daily QC Effect Distribution (1st-99th percentile, n={len(daily_trimmed):,})', 
+                  fontsize=12, fontweight='bold')
+    ax2.legend(loc='upper right')
+    
+    # --- Annual plots ---
+    # Left: All data vs filtered
+    ax3 = axes[1, 0]
+    ax3.hist(annual_df['pct_diff'], bins=50, alpha=0.5, 
+             label=f'All data (n={annual_total:,})', color=colors['all'], density=True)
+    ax3.hist(annual_filtered['pct_diff'], bins=50, alpha=0.5, 
+             label=f'Excluding ratio=1 (n={len(annual_filtered):,})', color=colors['filtered'], density=True)
+    ax3.axvline(x=0, color='red', linestyle='--', linewidth=1, alpha=0.7)
+    ax3.set_xlabel('QC Percent Change (%)', fontsize=11)
+    ax3.set_ylabel('Density', fontsize=11)
+    ax3.set_title('Annual QC Effect: All Data vs Excluding No-Correction Years', fontsize=12, fontweight='bold')
+    ax3.legend(loc='upper right')
+    
+    # Right: Filtered and trimmed
+    ax4 = axes[1, 1]
+    ax4.hist(annual_trimmed['pct_diff'], bins=50, alpha=0.7, color=colors['trimmed'], 
+             density=True, edgecolor='white', linewidth=0.3)
+    ax4.axvline(x=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7, label='No change')
+    ax4.axvline(x=annual_trimmed['pct_diff'].median(), color='black', linestyle='-', linewidth=1.5, 
+                label=f'Median: {annual_trimmed["pct_diff"].median():.2f}%')
+    ax4.set_xlabel('QC Percent Change (%)', fontsize=11)
+    ax4.set_ylabel('Density', fontsize=11)
+    ax4.set_title(f'Annual QC Effect Distribution (1st-99th percentile, n={len(annual_trimmed):,})', 
+                  fontsize=12, fontweight='bold')
+    ax4.legend(loc='upper right')
+    
+    plt.tight_layout()
+    plt.savefig(PLOT_DIR / 'qc_effect_distribution_comparison.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"QC effect comparison plot saved to {PLOT_DIR / 'qc_effect_distribution_comparison.png'}")
+    
+    # Print summary statistics
+    print("\n=== QC Effect Summary Statistics ===")
+    print(f"\nDaily Data:")
+    print(f"  All records: {daily_total:,}")
+    print(f"  Records with ratio=1 (no correction): {daily_ratio_one:,} ({daily_ratio_one/daily_total*100:.1f}%)")
+    print(f"  Records with correction: {len(daily_filtered):,} ({len(daily_filtered)/daily_total*100:.1f}%)")
+    print(f"  Median QC effect (filtered): {daily_filtered['pct_diff'].median():.2f}%")
+    print(f"  Mean QC effect (filtered): {daily_filtered['pct_diff'].mean():.2f}%")
+    
+    print(f"\nAnnual Data:")
+    print(f"  All records: {annual_total:,}")
+    print(f"  Records with ratio=1: {annual_ratio_one:,} ({annual_ratio_one/annual_total*100:.1f}%)")
+    print(f"  Records with correction: {len(annual_filtered):,} ({len(annual_filtered)/annual_total*100:.1f}%)")
+    print(f"  Median QC effect (filtered): {annual_filtered['pct_diff'].median():.2f}%")
+    print(f"  Mean QC effect (filtered): {annual_filtered['pct_diff'].mean():.2f}%")
+    
+    return daily_filtered, annual_filtered
+
+
+def plot_qc_effect_by_climate(daily_df, annual_df, exclude_ratio_one=True):
+    """
+    Create distribution plots showing QC effect by climate classification.
+    
+    Args:
+        daily_df: DataFrame with daily QC factors and Climate_Abbreviation column
+        annual_df: DataFrame with annual QC factors and Climate_Abbreviation column
+        exclude_ratio_one: If True, exclude records where ratio equals 1 (no correction)
+    """
+    climate_col = 'Climate_Abbreviation'
+    
+    # Check if climate column exists
+    if climate_col not in daily_df.columns or climate_col not in annual_df.columns:
+        print("Warning: Climate_Abbreviation column not found. Skipping climate plots.")
+        return
+    
+    # Calculate percent change
+    daily_df = daily_df.copy()
+    annual_df = annual_df.copy()
+    daily_df['pct_diff'] = (daily_df['ratio_post_pre'] - 1) * 100
+    annual_df['pct_diff'] = (annual_df['annual_ratio_post_pre'] - 1) * 100
+    
+    # Filter out ratio == 1 if requested
+    if exclude_ratio_one:
+        daily_filtered = daily_df[daily_df['ratio_post_pre'] != 1].copy()
+        annual_filtered = annual_df[annual_df['annual_ratio_post_pre'] != 1].copy()
+    else:
+        daily_filtered = daily_df.copy()
+        annual_filtered = annual_df.copy()
+    
+    # Get sorted unique climate classes
+    all_climates = sorted(set(daily_filtered[climate_col].unique()) | set(annual_filtered[climate_col].unique()))
+    
+    # Use Paired color palette
+    colors = plt.cm.Paired(np.linspace(0, 1, len(all_climates)))
+    climate_colors = dict(zip(all_climates, colors))
+    
+    # --- Daily QC Effect by Climate (Box Plot) ---
+    fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+    
+    # Trim to 1st-99th percentile for visualization
+    daily_p1, daily_p99 = daily_filtered['pct_diff'].quantile([0.01, 0.99])
+    annual_p1, annual_p99 = annual_filtered['pct_diff'].quantile([0.01, 0.99])
+    
+    daily_trimmed = daily_filtered[(daily_filtered['pct_diff'] >= daily_p1) & 
+                                   (daily_filtered['pct_diff'] <= daily_p99)]
+    annual_trimmed = annual_filtered[(annual_filtered['pct_diff'] >= annual_p1) & 
+                                     (annual_filtered['pct_diff'] <= annual_p99)]
+    
+    # Daily boxplot
+    ax1 = axes[0]
+    box_data_daily = [daily_trimmed[daily_trimmed[climate_col] == c]['pct_diff'].values 
+                      for c in all_climates]
+    bp1 = ax1.boxplot(box_data_daily, labels=all_climates, patch_artist=True, 
+                      showfliers=False, widths=0.6)
+    for patch, color in zip(bp1['boxes'], [climate_colors[c] for c in all_climates]):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
+    ax1.axhline(y=0, color='red', linestyle='--', linewidth=1, alpha=0.7)
+    ax1.set_xlabel('Climate Zone', fontsize=12)
+    ax1.set_ylabel('QC Percent Change (%)', fontsize=12)
+    ax1.set_title('Daily QC Effect by Climate Zone\n(Excluding No-Correction Days, 1st-99th percentile)', 
+                  fontsize=12, fontweight='bold')
+    ax1.tick_params(axis='x', rotation=45)
+    ax1.grid(axis='y', alpha=0.3)
+    
+    # Add sample size labels
+    for i, climate in enumerate(all_climates):
+        n = len(daily_trimmed[daily_trimmed[climate_col] == climate])
+        ax1.text(i + 1, ax1.get_ylim()[1], f'n={n:,}', ha='center', va='bottom', fontsize=8, rotation=90)
+    
+    # Annual boxplot
+    ax2 = axes[1]
+    box_data_annual = [annual_trimmed[annual_trimmed[climate_col] == c]['pct_diff'].values 
+                       for c in all_climates]
+    bp2 = ax2.boxplot(box_data_annual, labels=all_climates, patch_artist=True, 
+                      showfliers=False, widths=0.6)
+    for patch, color in zip(bp2['boxes'], [climate_colors[c] for c in all_climates]):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.7)
+    ax2.axhline(y=0, color='red', linestyle='--', linewidth=1, alpha=0.7)
+    ax2.set_xlabel('Climate Zone', fontsize=12)
+    ax2.set_ylabel('QC Percent Change (%)', fontsize=12)
+    ax2.set_title('Annual QC Effect by Climate Zone\n(Excluding No-Correction Years, 1st-99th percentile)', 
+                  fontsize=12, fontweight='bold')
+    ax2.tick_params(axis='x', rotation=45)
+    ax2.grid(axis='y', alpha=0.3)
+    
+    # Add sample size labels
+    for i, climate in enumerate(all_climates):
+        n = len(annual_trimmed[annual_trimmed[climate_col] == climate])
+        ax2.text(i + 1, ax2.get_ylim()[1], f'n={n:,}', ha='center', va='bottom', fontsize=8, rotation=90)
+    
+    plt.tight_layout()
+    plt.savefig(PLOT_DIR / 'qc_effect_by_climate_boxplot.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"QC effect by climate boxplot saved to {PLOT_DIR / 'qc_effect_by_climate_boxplot.png'}")
+    
+    # --- Violin plots by climate ---
+    fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+    
+    # Daily violin plot
+    ax1 = axes[0]
+    sns.violinplot(data=daily_trimmed, x=climate_col, y='pct_diff', ax=ax1,
+                   palette=climate_colors, order=all_climates, inner='box', cut=0)
+    ax1.axhline(y=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+    ax1.set_xlabel('Climate Zone', fontsize=12)
+    ax1.set_ylabel('QC Percent Change (%)', fontsize=12)
+    ax1.set_title('Daily QC Effect Distribution by Climate Zone\n(Excluding No-Correction Days, 1st-99th percentile)', 
+                  fontsize=12, fontweight='bold')
+    ax1.tick_params(axis='x', rotation=45)
+    ax1.grid(axis='y', alpha=0.3)
+    
+    # Annual violin plot
+    ax2 = axes[1]
+    sns.violinplot(data=annual_trimmed, x=climate_col, y='pct_diff', ax=ax2,
+                   palette=climate_colors, order=all_climates, inner='box', cut=0)
+    ax2.axhline(y=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+    ax2.set_xlabel('Climate Zone', fontsize=12)
+    ax2.set_ylabel('QC Percent Change (%)', fontsize=12)
+    ax2.set_title('Annual QC Effect Distribution by Climate Zone\n(Excluding No-Correction Years, 1st-99th percentile)', 
+                  fontsize=12, fontweight='bold')
+    ax2.tick_params(axis='x', rotation=45)
+    ax2.grid(axis='y', alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig(PLOT_DIR / 'qc_effect_by_climate_violin.png', dpi=300, bbox_inches='tight')
+    plt.close()
+    print(f"QC effect by climate violin plot saved to {PLOT_DIR / 'qc_effect_by_climate_violin.png'}")
+    
+    # --- Print statistics by climate ---
+    print("\n=== QC Effect Statistics by Climate Zone ===")
+    print("\nDaily QC Effect (filtered, excluding ratio=1):")
+    print("-" * 70)
+    print(f"{'Climate':<10} {'Count':>12} {'Median %':>12} {'Mean %':>12} {'Std %':>12}")
+    print("-" * 70)
+    for climate in all_climates:
+        subset = daily_trimmed[daily_trimmed[climate_col] == climate]['pct_diff']
+        print(f"{climate:<10} {len(subset):>12,} {subset.median():>12.2f} {subset.mean():>12.2f} {subset.std():>12.2f}")
+    
+    print("\nAnnual QC Effect (filtered, excluding ratio=1):")
+    print("-" * 70)
+    print(f"{'Climate':<10} {'Count':>12} {'Median %':>12} {'Mean %':>12} {'Std %':>12}")
+    print("-" * 70)
+    for climate in all_climates:
+        subset = annual_trimmed[annual_trimmed[climate_col] == climate]['pct_diff']
+        print(f"{climate:<10} {len(subset):>12,} {subset.median():>12.2f} {subset.mean():>12.2f} {subset.std():>12.2f}")
+
+
+def plot_qc_effect_combined_histogram_violin(daily_df, annual_df):
+    """
+    Create combined histogram + violin plots for QC'ed data excluding ratio=1.
+    Similar layout to plot_eto_ratio_climate_histogram_violin but shows percent change
+    and only includes records where QC was actually applied (ratio != 1).
+    
+    Args:
+        daily_df: DataFrame with daily QC factors and Climate_Abbreviation column
+        annual_df: DataFrame with annual QC factors and Climate_Abbreviation column
+    """
+    climate_col = 'Climate_Abbreviation'
+    
+    # Check if climate column exists
+    if climate_col not in daily_df.columns or climate_col not in annual_df.columns:
+        print("Warning: Climate_Abbreviation column not found. Skipping combined plots.")
+        return
+    
+    # Calculate percent change
+    daily_df = daily_df.copy()
+    annual_df = annual_df.copy()
+    daily_df['pct_diff'] = (daily_df['ratio_post_pre'] - 1) * 100
+    annual_df['pct_diff'] = (annual_df['annual_ratio_post_pre'] - 1) * 100
+    
+    # Filter out ratio == 1 (no correction applied)
+    daily_filtered = daily_df[daily_df['ratio_post_pre'] != 1].copy()
+    annual_filtered = annual_df[annual_df['annual_ratio_post_pre'] != 1].copy()
+    
+    # Get sorted unique climate classes
+    all_climates = sorted(set(daily_filtered[climate_col].unique()) | set(annual_filtered[climate_col].unique()))
+    
+    # Use Paired color palette
+    colors = plt.cm.Paired(np.linspace(0, 1, len(all_climates)))
+    climate_colors = dict(zip(all_climates, colors))
+    
+    # Trim to 1st-99th percentile for visualization
+    daily_p1, daily_p99 = daily_filtered['pct_diff'].quantile([0.01, 0.99])
+    annual_p1, annual_p99 = annual_filtered['pct_diff'].quantile([0.01, 0.99])
+    
+    daily_trimmed = daily_filtered[(daily_filtered['pct_diff'] >= daily_p1) & 
+                                   (daily_filtered['pct_diff'] <= daily_p99)]
+    annual_trimmed = annual_filtered[(annual_filtered['pct_diff'] >= annual_p1) & 
+                                     (annual_filtered['pct_diff'] <= annual_p99)]
+    
+    # Get number of unique stations
+    n_stations_daily = daily_filtered['station_id'].nunique()
+    n_stations_annual = annual_filtered['station_id'].nunique()
+    
+    # ========== DAILY PLOT ==========
+    fig = plt.figure(figsize=(16, 8))
+    
+    # Create custom gridspec
+    ax_kde = plt.subplot2grid((1, 5), (0, 0), colspan=3)
+    ax_violin = plt.subplot2grid((1, 5), (0, 3), colspan=4)
+    
+    overall_data = daily_trimmed['pct_diff'].dropna()
+    orig_data = daily_filtered['pct_diff'].dropna()
+    
+    if len(overall_data) > 1:
+        # Plot histogram bars
+        ax_kde.hist(
+            overall_data,
+            bins=50,
+            orientation='horizontal',
+            alpha=0.4,
+            color='#A9A9A9',
+            density=False,
+            edgecolor='#808080',
+            linewidth=0.5
+        )
+        
+        # Plot KDE line
+        ax_kde_twin = ax_kde.twiny()
+        sns.kdeplot(
+            y=overall_data,
+            ax=ax_kde_twin,
+            color="#000406",
+            alpha=0.9,
+            linewidth=4,
+            fill=False,
+            label=f'All sites (n={len(orig_data):,})'
+        )
+        
+        ax_kde_twin.set_xlabel('')
+        ax_kde_twin.tick_params(top=False, labeltop=False)
+        ax_kde_twin.spines['top'].set_visible(False)
+        ax_kde_twin.spines['right'].set_visible(False)
+    
+    # Add reference lines
+    data_mean = overall_data.mean()
+    data_std = overall_data.std()
+    ax_kde.axhline(y=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+    ax_kde.axhline(y=overall_data.median(), color='blue', linestyle='-', linewidth=1.5, alpha=0.7)
+    ax_kde.axhline(y=data_mean, color='green', linestyle=':', linewidth=1.5, alpha=0.7)
+    # Add ±std lines
+    ax_kde.axhline(y=data_mean + data_std, color='green', linestyle='-.', linewidth=1.2, alpha=0.5)
+    ax_kde.axhline(y=data_mean - data_std, color='green', linestyle='-.', linewidth=1.2, alpha=0.5)
+    # Add shaded region for ±std
+    ax_kde.axhspan(data_mean - data_std, data_mean + data_std, alpha=0.1, color='green')
+    
+    # Create violin plot
+    sns.violinplot(
+        data=daily_trimmed,
+        y='pct_diff',
+        hue=climate_col,
+        ax=ax_violin,
+        palette=climate_colors,
+        hue_order=all_climates,
+        dodge=True,
+        inner='box',
+        cut=0
+    )
+    
+    # Add reference line to violin plot
+    ax_violin.axhline(y=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+    
+    # Style KDE axis
+    ax_kde.set_ylabel('ETo QC Percent Change (%)', fontsize=18)
+    ax_kde.set_xlabel('site-days', fontsize=18)
+    ax_kde.xaxis.set_major_locator(plt.MaxNLocator(nbins=4, integer=True))
+    ax_kde.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x):,}'))
+    ax_kde.tick_params(axis='both', labelsize=14)
+    ax_kde.spines['top'].set_visible(False)
+    ax_kde.spines['right'].set_visible(False)
+    ax_kde.spines['left'].set_linewidth(2)
+    ax_kde.spines['bottom'].set_linewidth(2)
+    ax_kde.grid(False)
+    
+    # Style violin plot axis
+    ax_violin.set_ylabel('')
+    ax_violin.set_xlabel('')
+    ax_violin.tick_params(axis='both', labelsize=14)
+    ax_violin.set_xticklabels([])
+    for spine in ax_violin.spines.values():
+        spine.set_visible(False)
+    ax_violin.grid(False)
+    ax_violin.tick_params(left=False, bottom=False)
+    
+    # Match y-axis limits
+    y_min = min(ax_kde.get_ylim()[0], ax_violin.get_ylim()[0])
+    y_max = max(ax_kde.get_ylim()[1], ax_violin.get_ylim()[1])
+    ax_kde.set_ylim(y_min, y_max)
+    ax_violin.set_ylim(y_min, y_max)
+    ax_violin.set_yticklabels([])
+    ax_violin.tick_params(left=False)
+    
+    # Remove legends from subplots
+    if ax_violin.get_legend():
+        ax_violin.get_legend().remove()
+    if ax_kde.get_legend():
+        ax_kde.get_legend().remove()
+    
+    # Create legend
+    handles = [plt.Rectangle((0, 0), 1, 1, facecolor='#A9A9A9', alpha=0.4, edgecolor='#808080', linewidth=1)]
+    labels = [f'All QC\'d sites ({len(orig_data):,})']
+    
+    # Add reference line legends (using trimmed data stats)
+    trimmed_mean = overall_data.mean()
+    trimmed_std = overall_data.std()
+    handles.append(plt.Line2D([0], [0], color='red', linestyle='--', linewidth=1.5))
+    labels.append('No change (0%)')
+    handles.append(plt.Line2D([0], [0], color='blue', linestyle='-', linewidth=1.5))
+    labels.append(f'Median ({overall_data.median():.2f}%)')
+    handles.append(plt.Line2D([0], [0], color='green', linestyle=':', linewidth=1.5))
+    labels.append(f'Mean ({trimmed_mean:.2f}%)')
+    handles.append(plt.Rectangle((0, 0), 1, 1, facecolor='green', alpha=0.2, edgecolor='green', linestyle='-.'))
+    labels.append(f'±1 Std ({trimmed_std:.2f}%)')
+    
+    for climate_val in all_climates:
+        n_climate = daily_filtered[daily_filtered[climate_col] == climate_val].shape[0]
+        handles.append(plt.Rectangle((0, 0), 1, 1, facecolor=climate_colors[climate_val], alpha=0.8))
+        labels.append(f'{climate_val} ({n_climate:,})')
+    
+    fig.legend(
+        handles, labels,
+        title=f"Daily ETo QC Effect - Excluding No-Correction Days (n = {n_stations_daily} stations)",
+        loc='upper center',
+        bbox_to_anchor=(0.35, 1),
+        ncol=3,
+        fontsize=14,
+        title_fontsize=14,
+        frameon=False
+    )
+    
+    plt.tight_layout()
+    plt.savefig(PLOT_DIR / 'ETo_QC_PctDiff_Daily_Climate_Violin_Filtered.png', dpi=600, bbox_inches='tight')
+    plt.close()
+    print(f"Daily ETo QC effect climate plot saved to {PLOT_DIR / 'ETo_QC_PctDiff_Daily_Climate_Violin_Filtered.png'}")
+    
+    # ========== ANNUAL PLOT ==========
+    fig = plt.figure(figsize=(16, 8))
+    
+    ax_kde = plt.subplot2grid((1, 5), (0, 0), colspan=3)
+    ax_violin = plt.subplot2grid((1, 5), (0, 3), colspan=4)
+    
+    overall_data = annual_trimmed['pct_diff'].dropna()
+    orig_data = annual_filtered['pct_diff'].dropna()
+    
+    if len(overall_data) > 1:
+        # Plot histogram bars
+        ax_kde.hist(
+            overall_data,
+            bins=30,
+            orientation='horizontal',
+            alpha=0.4,
+            color='#A9A9A9',
+            density=False,
+            edgecolor='#808080',
+            linewidth=0.5
+        )
+        
+        # Plot KDE line
+        ax_kde_twin = ax_kde.twiny()
+        sns.kdeplot(
+            y=overall_data,
+            ax=ax_kde_twin,
+            color="#000406",
+            alpha=0.9,
+            linewidth=4,
+            fill=False,
+            label=f'All sites (n={len(orig_data):,})'
+        )
+        
+        ax_kde_twin.set_xlabel('')
+        ax_kde_twin.tick_params(top=False, labeltop=False)
+        ax_kde_twin.spines['top'].set_visible(False)
+        ax_kde_twin.spines['right'].set_visible(False)
+    
+    # Add reference lines
+    data_mean = overall_data.mean()
+    data_std = overall_data.std()
+    ax_kde.axhline(y=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+    ax_kde.axhline(y=overall_data.median(), color='blue', linestyle='-', linewidth=1.5, alpha=0.7)
+    ax_kde.axhline(y=data_mean, color='green', linestyle=':', linewidth=1.5, alpha=0.7)
+    # Add ±std lines
+    ax_kde.axhline(y=data_mean + data_std, color='green', linestyle='-.', linewidth=1.2, alpha=0.5)
+    ax_kde.axhline(y=data_mean - data_std, color='green', linestyle='-.', linewidth=1.2, alpha=0.5)
+    # Add shaded region for ±std
+    ax_kde.axhspan(data_mean - data_std, data_mean + data_std, alpha=0.1, color='green')
+    
+    # Create violin plot
+    sns.violinplot(
+        data=annual_trimmed,
+        y='pct_diff',
+        hue=climate_col,
+        ax=ax_violin,
+        palette=climate_colors,
+        hue_order=all_climates,
+        dodge=True,
+        inner='box',
+        cut=0
+    )
+    
+    # Add reference line to violin plot
+    ax_violin.axhline(y=0, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+    
+    # Style KDE axis
+    ax_kde.set_ylabel('ETo QC Percent Change (%)', fontsize=18)
+    ax_kde.set_xlabel('site-years', fontsize=18)
+    ax_kde.xaxis.set_major_locator(plt.MaxNLocator(nbins=4, integer=True))
+    ax_kde.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x):,}'))
+    ax_kde.tick_params(axis='both', labelsize=14)
+    ax_kde.spines['top'].set_visible(False)
+    ax_kde.spines['right'].set_visible(False)
+    ax_kde.spines['left'].set_linewidth(2)
+    ax_kde.spines['bottom'].set_linewidth(2)
+    ax_kde.grid(False)
+    
+    # Style violin plot axis
+    ax_violin.set_ylabel('')
+    ax_violin.set_xlabel('')
+    ax_violin.tick_params(axis='both', labelsize=14)
+    ax_violin.set_xticklabels([])
+    for spine in ax_violin.spines.values():
+        spine.set_visible(False)
+    ax_violin.grid(False)
+    ax_violin.tick_params(left=False, bottom=False)
+    
+    # Match y-axis limits
+    y_min = min(ax_kde.get_ylim()[0], ax_violin.get_ylim()[0])
+    y_max = max(ax_kde.get_ylim()[1], ax_violin.get_ylim()[1])
+    ax_kde.set_ylim(y_min, y_max)
+    ax_violin.set_ylim(y_min, y_max)
+    ax_violin.set_yticklabels([])
+    ax_violin.tick_params(left=False)
+    
+    # Remove legends from subplots
+    if ax_violin.get_legend():
+        ax_violin.get_legend().remove()
+    if ax_kde.get_legend():
+        ax_kde.get_legend().remove()
+    
+    # Create legend
+    handles = [plt.Rectangle((0, 0), 1, 1, facecolor='#A9A9A9', alpha=0.4, edgecolor='#808080', linewidth=1)]
+    labels = [f'All QC\'d sites ({len(orig_data):,})']
+    
+    # Add reference line legends (using trimmed data stats)
+    trimmed_mean = overall_data.mean()
+    trimmed_std = overall_data.std()
+    handles.append(plt.Line2D([0], [0], color='red', linestyle='--', linewidth=1.5))
+    labels.append('No change (0%)')
+    handles.append(plt.Line2D([0], [0], color='blue', linestyle='-', linewidth=1.5))
+    labels.append(f'Median ({overall_data.median():.2f}%)')
+    handles.append(plt.Line2D([0], [0], color='green', linestyle=':', linewidth=1.5))
+    labels.append(f'Mean ({trimmed_mean:.2f}%)')
+    handles.append(plt.Rectangle((0, 0), 1, 1, facecolor='green', alpha=0.2, edgecolor='green', linestyle='-.'))
+    labels.append(f'±1 Std ({trimmed_std:.2f}%)')
+    
+    for climate_val in all_climates:
+        n_climate = annual_filtered[annual_filtered[climate_col] == climate_val].shape[0]
+        handles.append(plt.Rectangle((0, 0), 1, 1, facecolor=climate_colors[climate_val], alpha=0.8))
+        labels.append(f'{climate_val} ({n_climate:,})')
+    
+    fig.legend(
+        handles, labels,
+        title=f"Annual ETo QC Effect - Excluding No-Correction Years (n = {n_stations_annual} stations)",
+        loc='upper center',
+        bbox_to_anchor=(0.35, 1),
+        ncol=3,
+        fontsize=14,
+        title_fontsize=14,
+        frameon=False
+    )
+    
+    plt.tight_layout()
+    plt.savefig(PLOT_DIR / 'ETo_QC_PctDiff_Annual_Climate_Violin_Filtered.png', dpi=600, bbox_inches='tight')
+    plt.close()
+    print(f"Annual ETo QC effect climate plot saved to {PLOT_DIR / 'ETo_QC_PctDiff_Annual_Climate_Violin_Filtered.png'}")
+
+
 def print_summary_statistics(daily_df, annual_df, complete_records):
     """Print summary statistics of the QC analysis."""
     print("\n" + "="*80)
@@ -572,6 +1174,18 @@ def main(load_existing=True):
     
     print("\nGenerating climate-based ETo ratio histograms and violin plots...")
     plot_eto_ratio_climate_histogram_violin(daily_df_climate, annual_df_climate, n_stations)
+    
+    # Generate QC effect distribution plots (excluding ratio=1 to highlight QC effect)
+    print("\nGenerating QC effect distribution plots (excluding no-correction records)...")
+    plot_qc_effect_distribution(daily_df_climate, annual_df_climate, exclude_ratio_one=True)
+    
+    # Generate QC effect plots by climate zone
+    print("\nGenerating QC effect plots by climate zone...")
+    plot_qc_effect_by_climate(daily_df_climate, annual_df_climate, exclude_ratio_one=True)
+    
+    # Generate combined histogram + violin plots for QC effect (excluding ratio=1)
+    print("\nGenerating combined histogram + climate violin plots for QC effect...")
+    plot_qc_effect_combined_histogram_violin(daily_df_climate, annual_df_climate)
     
     print("\nAnalysis complete!")
     

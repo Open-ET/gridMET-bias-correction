@@ -55,13 +55,13 @@ def load_station_data(station_id):
     merged['Rso_corr'] = merged['Rso (w/m2)_corr']
     merged['Optimized_TR_Rs'] = merged['Optimized TR Rs (w/m2)']
     
-    # Calculate percent difference: (Corrected - Original) / Original * 100
-    merged['Rs_pct_diff'] = np.where(
+    # Calculate percent change: (Corrected - Original) / Original * 100
+    merged['Rs_pct_change'] = np.where(
         merged['Rs_orig'] != 0,
         (merged['Rs_corr'] - merged['Rs_orig']) / merged['Rs_orig'] * 100,
         np.nan
     )
-    merged['Rso_pct_diff'] = np.where(
+    merged['Rso_pct_change'] = np.where(
         merged['Rso_orig'] != 0,
         (merged['Rso_corr'] - merged['Rso_orig']) / merged['Rso_orig'] * 100,
         np.nan
@@ -75,7 +75,7 @@ def plot_station_rs_comparison(station_id, save_plot=True):
     Create a figure with three subplots for a given station:
     (a) Original Rs and Rso at daily timestep
     (b) Corrected Rs and Rso at daily timestep
-    (c) Percent difference between corrected and original
+    (c) Percent change between corrected and original
     
     Args:
         station_id: Station identifier (e.g., '635_NV')
@@ -115,12 +115,12 @@ def plot_station_rs_comparison(station_id, save_plot=True):
     ax2.grid(True, alpha=0.3)
     ax2.set_ylim(bottom=0)
     
-    # --- (c) Percent difference ---
+    # --- (c) Percent change ---
     ax3 = axes[2]
-    ax3.plot(df['Date'], df['Rs_pct_diff'], color=color_rs, linewidth=0.8, alpha=0.8, label='Rs % Difference')
-    ax3.plot(df['Date'], df['Rso_pct_diff'], color=color_rso, linewidth=0.8, alpha=0.8, label='Rso % Difference')
+    ax3.plot(df['Date'], df['Rs_pct_change'], color=color_rs, linewidth=0.8, alpha=0.8, label='Rs % Change')
+    ax3.plot(df['Date'], df['Rso_pct_change'], color=color_rso, linewidth=0.8, alpha=0.8, label='Rso % Change')
     ax3.axhline(y=0, color='black', linestyle='--', linewidth=1, alpha=0.5)
-    ax3.set_ylabel('Percent Difference (%)', fontsize=16)
+    ax3.set_ylabel('Percent Change (%)', fontsize=16)
     ax3.set_xlabel('Date', fontsize=16)
     ax3.text(-0.02, 1.03, '(c)', transform=ax3.transAxes, fontsize=16, fontweight='bold', va='bottom', ha='right')
     ax3.legend(loc='upper left', bbox_to_anchor=(1.01, 1), fontsize=16, frameon=False)
@@ -157,11 +157,11 @@ def plot_station_rs_comparison(station_id, save_plot=True):
     print(f"\nRs Statistics:")
     print(f"  Original:  Mean = {df['Rs_orig'].mean():.2f}, Median = {df['Rs_orig'].median():.2f}")
     print(f"  Corrected: Mean = {df['Rs_corr'].mean():.2f}, Median = {df['Rs_corr'].median():.2f}")
-    print(f"  % Diff:    Mean = {df['Rs_pct_diff'].mean():.2f}%, Median = {df['Rs_pct_diff'].median():.2f}%")
+    print(f"  % Change:  Mean = {df['Rs_pct_change'].mean():.2f}%, Median = {df['Rs_pct_change'].median():.2f}%")
     print(f"\nRso Statistics:")
     print(f"  Original:  Mean = {df['Rso_orig'].mean():.2f}, Median = {df['Rso_orig'].median():.2f}")
     print(f"  Corrected: Mean = {df['Rso_corr'].mean():.2f}, Median = {df['Rso_corr'].median():.2f}")
-    print(f"  % Diff:    Mean = {df['Rso_pct_diff'].mean():.2f}%, Median = {df['Rso_pct_diff'].median():.2f}%")
+    print(f"  % Change:  Mean = {df['Rso_pct_change'].mean():.2f}%, Median = {df['Rso_pct_change'].median():.2f}%")
     
     return df
 
@@ -203,13 +203,13 @@ def load_station_rh_data(station_id):
     merged['RHMin_orig'] = merged['RHMin (%)_corr'] - merged['RHMin (%)_delta']
     merged['RHMin_corr'] = merged['RHMin (%)_corr']
     
-    # Calculate percent difference: (Corrected - Original) / Original * 100
-    merged['RHMax_pct_diff'] = np.where(
+    # Calculate percent change: (Corrected - Original) / Original * 100
+    merged['RHMax_pct_change'] = np.where(
         merged['RHMax_orig'] != 0,
         (merged['RHMax_corr'] - merged['RHMax_orig']) / merged['RHMax_orig'] * 100,
         np.nan
     )
-    merged['RHMin_pct_diff'] = np.where(
+    merged['RHMin_pct_change'] = np.where(
         merged['RHMin_orig'] != 0,
         (merged['RHMin_corr'] - merged['RHMin_orig']) / merged['RHMin_orig'] * 100,
         np.nan
@@ -223,7 +223,7 @@ def plot_station_rh_comparison(station_id, save_plot=True):
     Create a figure with three subplots for a given station:
     (a) Original RHMax and RHMin at daily timestep
     (b) Corrected RHMax and RHMin at daily timestep
-    (c) Percent difference between corrected and original
+    (c) Percent change between corrected and original
     
     Args:
         station_id: Station identifier (e.g., '1069_MT')
@@ -263,12 +263,12 @@ def plot_station_rh_comparison(station_id, save_plot=True):
     ax2.grid(True, alpha=0.3)
     ax2.set_ylim(0, 105)
     
-    # --- (c) Percent difference ---
+    # --- (c) Percent change ---
     ax3 = axes[2]
-    ax3.plot(df['Date'], df['RHMax_pct_diff'], color=color_rhmax, linewidth=0.8, alpha=0.8, label='RHMax % Difference')
-    ax3.plot(df['Date'], df['RHMin_pct_diff'], color=color_rhmin, linewidth=0.8, alpha=0.8, label='RHMin % Difference')
+    ax3.plot(df['Date'], df['RHMax_pct_change'], color=color_rhmax, linewidth=0.8, alpha=0.8, label='RHMax % Change')
+    ax3.plot(df['Date'], df['RHMin_pct_change'], color=color_rhmin, linewidth=0.8, alpha=0.8, label='RHMin % Change')
     ax3.axhline(y=0, color='black', linestyle='--', linewidth=1, alpha=0.5)
-    ax3.set_ylabel('Percent Difference (%)', fontsize=16)
+    ax3.set_ylabel('Percent Change (%)', fontsize=16)
     ax3.set_xlabel('Date', fontsize=16)
     ax3.text(-0.02, 1.03, '(c)', transform=ax3.transAxes, fontsize=16, fontweight='bold', va='bottom', ha='right')
     ax3.legend(loc='upper left', bbox_to_anchor=(1.01, 1), fontsize=16, frameon=False)
@@ -305,11 +305,11 @@ def plot_station_rh_comparison(station_id, save_plot=True):
     print(f"\nRHMax Statistics:")
     print(f"  Original:  Mean = {df['RHMax_orig'].mean():.2f}%, Median = {df['RHMax_orig'].median():.2f}%")
     print(f"  Corrected: Mean = {df['RHMax_corr'].mean():.2f}%, Median = {df['RHMax_corr'].median():.2f}%")
-    print(f"  % Diff:    Mean = {df['RHMax_pct_diff'].mean():.2f}%, Median = {df['RHMax_pct_diff'].median():.2f}%")
+    print(f"  % Change:  Mean = {df['RHMax_pct_change'].mean():.2f}%, Median = {df['RHMax_pct_change'].median():.2f}%")
     print(f"\nRHMin Statistics:")
     print(f"  Original:  Mean = {df['RHMin_orig'].mean():.2f}%, Median = {df['RHMin_orig'].median():.2f}%")
     print(f"  Corrected: Mean = {df['RHMin_corr'].mean():.2f}%, Median = {df['RHMin_corr'].median():.2f}%")
-    print(f"  % Diff:    Mean = {df['RHMin_pct_diff'].mean():.2f}%, Median = {df['RHMin_pct_diff'].median():.2f}%")
+    print(f"  % Change:  Mean = {df['RHMin_pct_change'].mean():.2f}%, Median = {df['RHMin_pct_change'].median():.2f}%")
     
     return df
 

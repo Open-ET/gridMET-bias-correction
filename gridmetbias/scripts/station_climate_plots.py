@@ -140,7 +140,7 @@ def make_station_climate_plots(
                 bins=30,
                 orientation='horizontal',  # Horizontal orientation to match vertical KDE
                 alpha=0.4,
-                color='#D3D3D3',  # Light gray (light shade of black)
+                color='#A9A9A9',  # Light gray (light shade of black)
                 density=False,  # Changed to False to show counts instead of density
                 edgecolor='#808080',  # Medium gray for edges
                 linewidth=0.5
@@ -240,7 +240,7 @@ def make_station_climate_plots(
         labels = []
         
         # Add overall sites legend first
-        handles.append(plt.Rectangle((0, 0), 1, 1, facecolor='#D3D3D3', alpha=0.4))
+        handles.append(plt.Rectangle((0, 0), 1, 1, facecolor='#A9A9A9', alpha=0.4))
         n_total = station_clim_df.shape[0]
         labels.append(f'All sites ({n_total:,})')
         
