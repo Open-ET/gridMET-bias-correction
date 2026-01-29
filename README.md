@@ -16,7 +16,7 @@ Volk, J. M., Dunkerly, C., Majumdar, S., Huntington, J. L., Minor, B. A., Kim, Y
 Assessing and Correcting Bias in Gridded Reference Evapotranspiration over Agricultural Lands Across the Contiguous United States. _In prep. for Agricultural Water Management_.
 
 Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). 
-CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States. _In prep. for Nature Scientific Data. Zenodo_. https://doi.org/10.5281/zenodo.18122156
+CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States. _Under review in Nature Scientific Data_. https://doi.org/10.31223/X56T9Z. [Datset](https://doi.org/10.5281/zenodo.18122156)
 
 ## Disk Space Requirements
 
