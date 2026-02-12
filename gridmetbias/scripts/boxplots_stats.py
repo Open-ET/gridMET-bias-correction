@@ -60,7 +60,7 @@ simplified_names = {
 }
 
 def generate_boxplots(var_name):
-    data_path = f"../../Data/Point bias data/Climate/{var_name}_merged_with_climate.csv"
+    data_path = f"../../Data/Point_bias_data/Climate/{var_name}_merged_with_climate.csv"
     merged_data = pd.read_csv(data_path)
 
     if var_name in ["tmin_c", "tmax_c"]:
@@ -84,20 +84,20 @@ def generate_boxplots(var_name):
 
     # Boxplot 1: All sites
     sns.boxplot(x=valid_data[plot_variable], ax=axes[0], palette="Set2")
-    axes[0].set_title(f"{simplified_names[var_name]} bias ({time_period_label}) Across All Sites", fontsize=16, pad=10)
-    axes[0].set_xlabel(f"{simplified_names[var_name]} bias", fontsize=12)
+    axes[0].set_title(f"{simplified_names[var_name]} Relative Bias ({time_period_label}) Across All Sites", fontsize=16, pad=10)
+    axes[0].set_xlabel(f"{simplified_names[var_name]} Relative Bias", fontsize=12)
 
     # Boxplot 2: East vs. West of 100th meridian
     sns.boxplot(x='Region', y=plot_variable, data=valid_data, ax=axes[1], palette="Set3")
-    axes[1].set_title(f"{simplified_names[var_name]} bias ({time_period_label}) by Region (East/West of 100th Meridian)", fontsize=16, pad=10)
+    axes[1].set_title(f"{simplified_names[var_name]} Relative Bias ({time_period_label}) by Region (East/West of 100th Meridian)", fontsize=16, pad=10)
     axes[1].set_xlabel("")
-    axes[1].set_ylabel(f"{simplified_names[var_name]} bias", fontsize=12)
+    axes[1].set_ylabel(f"{simplified_names[var_name]} Relative Bias", fontsize=12)
 
     # Boxplot 3: By Lumped Climate Zone
     sns.boxplot(x='Lumped_Zone', y=plot_variable, data=valid_data, ax=axes[2], palette="Pastel2")
-    axes[2].set_title(f"{simplified_names[var_name]} bias ({time_period_label}) by Lumped Climate Zone", fontsize=16, pad=10)
+    axes[2].set_title(f"{simplified_names[var_name]} Relative Bias ({time_period_label}) Grouped by Climate Zone", fontsize=16, pad=10)
     axes[2].set_xlabel("")
-    axes[2].set_ylabel(f"{simplified_names[var_name]} bias", fontsize=12)
+    axes[2].set_ylabel(f"{simplified_names[var_name]} Relative Bias", fontsize=12)
     axes[2].tick_params(axis='x', rotation=30, labelsize=10)  # Rotate for better readability
 
     plot_output_path = os.path.join(plots_folder, f"{simplified_names[var_name]}_Bias_Boxplots_{plot_variable}.png")
