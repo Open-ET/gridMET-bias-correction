@@ -128,20 +128,15 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 **Input Data Files:**
 | File | Path |
 |------|------|
-| Monthly corrected | `../../Data/paired_flux_OpenET_data/merged_monthly_corrv2.csv` |
-| Monthly uncorrected | `../../Data/paired_flux_OpenET_data/merged_monthly_uncorrv2.csv` |
-| Daily corrected | `../../Data/paired_flux_OpenET_data/merged_daily_corrv2.csv` |
-| Daily uncorrected | `../../Data/paired_flux_OpenET_data/merged_daily_uncorrv2.csv` |
+| Monthly corrected | `../../Data/paired_flux_OpenET_data/merged_monthly_corrv3.csv` |
+| Monthly uncorrected | `../../Data/paired_flux_OpenET_data/merged_monthly_uncorrv3.csv` |
+| Daily corrected | `../../Data/paired_flux_OpenET_data/merged_daily_corrv3.csv` |
+| Daily uncorrected | `../../Data/paired_flux_OpenET_data/merged_daily_uncorrv3.csv` |
 
 **Output Files:**
 | File | Path |
 |------|------|
-| Scatter plots | `../../Plots/OpenET_accuracy/{frequency}_{region}/` |
-
-**Configurable Options:**
-- `frequency`: `monthly` or `daily`
-- OpenET models: `EEMETRIC`, `SSEBOP`, `SIMS`, `ensemble_mean`
-- Regions: All, East (≥-100° lon), West (<-100° lon)
+| Scatter plots | `../../Plots/OpenET_accuracy/Figure6_croplands_monthly_openet_vs_flux.jpg` |
 
 **Land Type Categories:** Croplands, Evergreen Forests, Grasslands, Mixed Forests, Shrublands, Wetland/Riparian
 
@@ -244,32 +239,6 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 
 ---
 
-### 11. `station_crop_plots.py`
-**Purpose:** Creates plots for station variables grouped by USDA Cropland Data Layer (CDL) crop type using Google Earth Engine.
-
-**Author:** Dr. Sayantan Majumdar
-
-**Note:** This script was not used in the CONUS-AgWeather paper.
-
-**Input Data Files:**
-| File | Path |
-|------|------|
-| Station DataFrame | With station ID, longitude, latitude |
-| Station Excel files | Directory containing station data |
-
-**Output Files:**
-| File | Path |
-|------|------|
-| Station CDL CSV | `{output_dir}/{station_id}_cdl_data.csv` |
-| Crop plots | `../../Plots/Crop_Bias_Distributions/` |
-
-**External Dependencies:**
-- Google Earth Engine (requires authentication)
-- Dask for parallel processing
-
-**Crop Type Categories:** Corn, Cotton, Soybeans, Wheat, Alfalfa, Other
-
----
 
 ## Data Dependencies
 
