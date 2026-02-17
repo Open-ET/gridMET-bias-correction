@@ -115,9 +115,24 @@ def make_station_climate_plots(
         # print('Number of stations:', station_climate_df['Station ID'].nunique())
         print(f'Number of site-days for {station_var}: {site_days:,}')
     
-        station_clim_df[climate_col] = station_clim_df[climate_col].astype(str)
-        station_clim_df[climate_col] = station_clim_df[climate_col].replace('None', 'Other')
-        climate = sorted(station_clim_df[climate_col].unique())
+        # Ensure climate labels are clean + consistent (avoid float/str mix from NaNs)
+        station_clim_df = station_clim_df.dropna(subset=[station_var]).copy()
+
+        clim = station_clim_df[climate_col]
+
+        # Convert to pandas string dtype, fill missing, and normalize placeholders
+        clim = clim.astype("string").fillna("Other")
+        clim = clim.replace({"None": "Other", "nan": "Other", "NaN": "Other"})
+
+        # Use consistent sorted list
+        climate = sorted(clim.unique().tolist())
+
+        # Put "Other" last (optional)
+        if "Other" in climate:
+            climate = [c for c in climate if c != "Other"] + ["Other"]
+
+        station_clim_df[climate_col] = clim
+
 
         # Use Paired color palette as requested
         colors = plt.cm.Paired(np.linspace(0, 1, len(climate)))
