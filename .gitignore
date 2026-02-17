@@ -168,4 +168,4 @@ cython_debug/
 __pycache__
 Data/*
 !Data/README.md
-Plots/GridMET_Plots/**/*Daily*.csv
+Plots/*
