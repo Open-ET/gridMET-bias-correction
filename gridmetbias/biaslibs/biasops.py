@@ -1315,8 +1315,8 @@ def gridmet_bias_comp_analysis(
         'Daily': '(mm/day)',
         'Monthly': '(mm/month)'
     }
-    stat_dir = f'{output_dir}GridMET_ETo_Stats/'
-    os.makedirs(stat_dir, exist_ok=True)
+    #stat_dir = f'{output_dir}GridMET_ETo_Stats/'
+    #os.makedirs(stat_dir, exist_ok=True)
     region_dict = {
         'East': 'Eastern U.S.',
         'West': 'Western U.S.',

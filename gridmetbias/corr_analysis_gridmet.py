@@ -11,7 +11,7 @@ import biaslibs as blibs
 
 if __name__ == '__main__':
     # Define the file paths
-    csv_files = glob('../Data/Point bias data/*.csv')
+    csv_files = glob('../Data/Point_bias_data/*.csv')
     csv_files = [f for f in csv_files if 'climate' not in f.split(os.sep)[-1]]
     et_files = [f for f in csv_files if f.split('/')[-1].startswith('et')]
     other_files = [f for f in csv_files if f not in et_files]
