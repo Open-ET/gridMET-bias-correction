@@ -125,7 +125,7 @@ Functions for extracting geospatial data from Google Earth Engine at station loc
 #### Requirements
 
 - Google Earth Engine account and authentication
-- GCloud project ID (default: `ee-grid-obs-comp`)
+- GCloud project ID (set your GCloud project)
 
 ---
 
