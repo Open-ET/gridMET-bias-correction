@@ -17,7 +17,7 @@ from matplotlib.ticker import FuncFormatter
 from .geeops import get_irr_crop_data
 from glob import glob
 from sklearn.metrics import mean_absolute_error
-warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore")
 
 
 def correlation_matrix_with_pvalues(
@@ -680,7 +680,6 @@ def plot_irr_crop_bias_distributions(
         file_check = os.path.exists(bias_all_crop_csv) and \
             os.path.exists(bias_no_irr_crop_csv) and \
             os.path.exists(bias_irr_crop_csv)
-        file_check = False  # always recompute for now
         var_name = csv_file.split('/')[-1].split('_')[0].upper()
         temp_flag = False
         if var_name in ['TMIN', 'TMAX']:
@@ -1389,13 +1388,13 @@ def gridmet_bias_comp_analysis(
         for gridmet_time_df, station_file_dir, time_val in zip(gridmet_time_df_list, station_files_dir, time_list):   
             time_station_df = pd.DataFrame()
             for station_csv in glob(f'{station_file_dir}*.csv'):
-                station_df = pd.read_csv(station_csv)
+                station_df = pd.read_csv(station_csv).copy()
                 if station_et_col in station_df.columns:
                     station_name = station_csv.split('/')[-1].split(f'_{time_val.lower()}')[0]
                     station_df[site_col] = station_name
                     time_station_df = pd.concat([time_station_df, station_df])
 
-            time_station_df = time_station_df.rename(columns={'date': date_col})
+            time_station_df = time_station_df.rename(columns={'date': date_col}).copy()
             if time_val == 'Monthly':
                 # set date to Year-Month
                 time_station_df[date_col] = pd.to_datetime(time_station_df[date_col]).dt.to_period('M')

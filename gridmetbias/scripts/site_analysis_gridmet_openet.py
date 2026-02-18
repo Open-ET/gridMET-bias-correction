@@ -1,6 +1,8 @@
 # This script performs site analysis for GridMET ETo and OpenET actual ET data for each site.
 import pandas as pd
 import zipfile
+import warnings
+warnings.filterwarnings("ignore")
 from glob import glob
 
 

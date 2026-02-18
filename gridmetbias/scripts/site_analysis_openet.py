@@ -138,7 +138,8 @@ def cropland_site_analysis_openet(
         output_dir: str,
         station_metadata: str,
         return_only_metrics: bool = False,
-        dt_type: str = 'monthly'
+        dt_type: str = 'monthly',
+        verbose: bool = False
 ) -> None:
     """
     Perform site analysis for OpenET data over croplands.
@@ -156,7 +157,7 @@ def cropland_site_analysis_openet(
         This is used to get the site geometry information.
         return_only_metrics (bool): If True, only return the metrics DataFrame without generating plots. Default is False.
         dt_type (str): The type of data to analyze (e.g., 'monthly', 'daily'). Default is 'monthly'.
-
+        verbose (bool): If True, print additional information during processing. Default is False.
     Returns:
         None
     """
@@ -168,7 +169,8 @@ def cropland_site_analysis_openet(
         versions = ["v3"]  # Example versions, adjust as needed
         corr_uncorr = ["corr", "uncorr"]
         metrics_df = pd.DataFrame()
-        print("Starting site analysis and plotting for OpenET data...")
+        if verbose:
+            print("Starting site analysis and plotting for OpenET data...")
         station_metadata_df = pd.read_excel(station_metadata, skiprows=1)
         station_metadata_df = station_metadata_df[["Site ID", "Latitude", "Longitude"]]
         station_metadata_df.rename(columns={"Site ID": "SITE_ID"}, inplace=True)
@@ -205,7 +207,8 @@ def cropland_site_analysis_openet(
                     )
                     metrics_df = pd.concat([metrics_df, m_df], ignore_index=True)
 
-                    
+                    if verbose:
+                        print(f"Processed site {sid} for version {version} and type {corr_uncorr_type}.")
                 if site_id in ["All", "East", "West"] or isinstance(site_id, list):
                     df_sites = df[df["SITE_ID"].isin(site_ids)]
                     site_name = "All" if site_id == "All" else "East" if site_id == "East" else "West" if site_id == "West" else site_id
@@ -223,10 +226,12 @@ def cropland_site_analysis_openet(
         # Save the metrics DataFrame to a CSV file
         metrics_df = metrics_df.merge(station_metadata_df)
         metrics_df.to_csv(metrics_csv_path, index=False)
-        print(f"Metrics saved to {metrics_csv_path}")
+        if verbose:
+            print(f"Metrics saved to {metrics_csv_path}")
     else:  
         metrics_df = pd.read_csv(metrics_csv_path)
-        print(f"Metrics loaded from {metrics_csv_path}")
+        if verbose:
+            print(f"Metrics loaded from {metrics_csv_path}")
     return metrics_df    
 
 
@@ -234,7 +239,8 @@ def query_metrics(
         metrics_df: pd.DataFrame, 
         plot_dir: str,
         openet_model = 'ensemble_mean',
-        error_metric: str | list [str] = "MBE"
+        error_metric: str | list [str] = "MBE",
+        verbose: bool = False
 ) -> pd.DataFrame:
     """
     Query the metrics dataframe to find the sites where the bias correction improves the OpenET model performance.
@@ -246,6 +252,7 @@ def query_metrics(
         openet_model (str): The OpenET model to filter the metrics. Default is 'ensemble_mean'.
         error_metric (str | list[str]): The error metric to use for filtering. Default is "MBE". 
         Combinations of metrics can be provided as a list. For example, ["r2", "RMSE", "MAE", "MBE"].
+        verbose (bool): If True, print additional information during processing. Default is False.
 
     Returns:
         A tuple of (pd.DataFrame, str): DataFrame containing the site IDs where the bias correction improves the 
@@ -282,7 +289,8 @@ def query_metrics(
         error_metric = error_metric[0]
     if isinstance(error_metric, list) and len(error_metric) > 1:
         for metric in error_metric:
-            print(f"Filtering for metric: {metric}")
+            if verbose:
+                print(f"Filtering for metric: {metric}")
             if metric == "r2":
                 improved_sites = improved_sites[improved_sites['r2_diff'] > 0]
             elif metric in ["RMSE", "MAE", "MBE"]:
@@ -301,9 +309,11 @@ def query_metrics(
     
     improved_site_ids = improved_sites['SITE_ID'].tolist()
     if not improved_site_ids:
-        print(f"No sites found with improved performance for {openet_model} using metrics: {error_metric}")
+        if verbose:
+            print(f"No sites found with improved performance for {openet_model} using metrics: {error_metric}")
         return []
-    print(f"Sites with improved performance for {openet_model} using metrics: {error_metric}:")
+    if verbose:
+        print(f"Sites with improved performance for {openet_model} using metrics: {error_metric}:")
     improved_dir = Path(plot_dir) / f"Improved_Sites/{openet_model}/{error_metric_type}"
     improved_dir.mkdir(parents=True, exist_ok=True)
     # Copy the plots for the improved sites to the output directory
@@ -313,19 +323,23 @@ def query_metrics(
             # move the site directory to the improved directory
             improved_site_dir = improved_dir / site
             copytree(site_plots_dir, improved_site_dir, dirs_exist_ok=True)
-            print(f"Copied plots for site {site} to {improved_site_dir}")
+            if verbose:
+                print(f"Copied plots for site {site} to {improved_site_dir}")
         else:
-            print(f"No plots found for site {site} in {plot_dir}. Skipping.")
+            if verbose:
+                print(f"No plots found for site {site} in {plot_dir}. Skipping.")
     improved_sites.to_csv(improved_dir / f"improved_metrics.csv", index=False)
     return improved_sites, improved_dir
 
 
-def download_conus_boundaries(output_dir: str) -> gpd.GeoDataFrame:
+def download_conus_boundaries(output_dir: str, verbose: bool = False) -> gpd.GeoDataFrame:
     """
     Download CONUS state boundaries from ESRI feature server.
     
     Args:
         output_dir (str): Directory to save the downloaded shapefile
+        verbose (bool): If True, print additional information during processing. Default is False.
+
         
     Returns:
         gpd.GeoDataFrame: CONUS state boundaries
@@ -349,11 +363,13 @@ def download_conus_boundaries(output_dir: str) -> gpd.GeoDataFrame:
     
     # Check if file already exists
     if output_path.exists():
-        print(f"CONUS boundaries already exist at {output_path}")
+        if verbose:
+            print(f"CONUS boundaries already exist at {output_path}")
         return gpd.read_file(output_path)
     
     try:
-        print("Downloading CONUS boundaries from ESRI feature server...")
+        if verbose:
+            print("Downloading CONUS boundaries from ESRI feature server...")
         response = requests.get(base_url, params=params, timeout=30)
         response.raise_for_status()
         
@@ -363,16 +379,19 @@ def download_conus_boundaries(output_dir: str) -> gpd.GeoDataFrame:
         
         # Load as GeoDataFrame
         gdf = gpd.read_file(output_path)
-        print(f"Successfully downloaded CONUS boundaries to {output_path}")
+        if verbose:
+            print(f"Successfully downloaded CONUS boundaries to {output_path}")
         print(f"Downloaded {len(gdf)} state boundaries")
         
         return gdf
         
     except requests.exceptions.RequestException as e:
-        print(f"Error downloading CONUS boundaries: {e}")
+        if verbose:
+            print(f"Error downloading CONUS boundaries: {e}")
         return None
     except Exception as e:
-        print(f"Error processing CONUS boundaries: {e}")
+        if verbose:
+            print(f"Error processing CONUS boundaries: {e}")
         return None
 
 
@@ -380,7 +399,8 @@ def create_us_map_improved_sites(
         conus_shp: str,
         output_dir: str,
         metrics_df: pd.DataFrame,
-        openet_model: str = 'ensemble_mean'
+        openet_model: str = 'ensemble_mean',
+        verbose: bool = False
 ) -> None:
     """
     Create a US map showing improved sites with different color codes based on improvement metrics.
@@ -391,6 +411,7 @@ def create_us_map_improved_sites(
         output_dir (str): Directory to save the map.
         metrics_df (pd.DataFrame): DataFrame containing the metrics for each site and model.
         openet_model (str): The OpenET model to filter the metrics. Default is 'ensemble_mean'.
+        verbose (bool): If True, print additional information during processing. Default is False.
     
     Returns:
         None
@@ -447,7 +468,8 @@ def create_us_map_improved_sites(
                 # convert improved_sites_gdf to dictionary
                 improved_sites_dict[label]['gdf'] = improved_sites_gdf
         except Exception as e:
-            print(f"Error processing {label}: {e}")
+            if verbose:
+                print(f"Error processing {label}: {e}")
             continue
     
     # Create the map
@@ -545,8 +567,8 @@ def create_us_map_improved_sites(
     map_path = Path(output_dir) / f"{openet_model}_improved_sites_map.png"
     plt.savefig(map_path, dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
-    
-    print(f"US map saved to {map_path}")
+    if verbose:
+        print(f"US map saved to {map_path}")
     
     # Create a summary table
     summary_data = []
@@ -561,12 +583,14 @@ def create_us_map_improved_sites(
         summary_df = pd.DataFrame(summary_data)
         summary_path = Path(output_dir) / f"{openet_model}_improved_sites_summary.csv"
         summary_df.to_csv(summary_path, index=False)
-        print(f"Summary table saved to {summary_path}")
+        if verbose:
+            print(f"Summary table saved to {summary_path}")
 
 
 def save_improved_sites_as_geojson(
         improved_sites: pd.DataFrame, 
-        output_dir: str
+        output_dir: str,
+        verbose: bool = False
 ) -> gpd.GeoDataFrame:
     """
     Save the improved sites as a GeoJSON file.
@@ -574,6 +598,7 @@ def save_improved_sites_as_geojson(
     Args:
         improved_sites (pd.DataFrame): DataFrame containing the improved sites.
         output_dir (str): Directory to save the GeoJSON files.
+        verbose (bool): If True, print additional information during processing. Default is False.
 
     Returns:
         gpd.GeoDataFrame: GeoDataFrame containing the improved sites.
@@ -590,7 +615,8 @@ def save_improved_sites_as_geojson(
 
     geojson_path = Path(output_dir) / "improved_sites.geojson"
     gdf.to_file(geojson_path, driver="GeoJSON")
-    print(f"Saved improved sites to {geojson_path}")
+    if verbose:
+        print(f"Saved improved sites to {geojson_path}")
     return gdf
 
 if __name__ == "__main__":
@@ -601,19 +627,21 @@ if __name__ == "__main__":
     station_metadata = "../../Data/flux_ET_dataset/station_metadata.xlsx"
     conus_shp = '../../Data/states/states.shp'
     dt = ['daily', 'monthly']  # Data types to process
+    verbose = False  # Set to True to enable verbose output
+    print(f"Starting site analysis for OpenET data with site_id={site_id} and data types: {dt}\nThis may take a while...")
+    output_prefix = "../../Plots/Site_Analysis_OpenET/"
 
     for dt_type in dt:
-        output_directory = f"../../Plots/Site_Analysis_OpenET/{dt_type}"  # Replace with actual output directory
+        output_directory = f"{output_prefix}{dt_type}"  # Replace with actual output directory
         metrics_df = cropland_site_analysis_openet(
             site_id=site_id,
             csv_dir=csv_directory,
             output_dir=output_directory,
             station_metadata=station_metadata,
             return_only_metrics=False,
-            dt_type=dt_type
+            dt_type=dt_type,
+            verbose=verbose
         )
-        print(metrics_df.columns)
-        print(metrics_df.SITE_ID.unique())
         metrics_df = metrics_df[metrics_df.SITE_ID != 'List']  # Remove the 'List' site if it exists
 
         # Create US map showing all improved sites with different color codes
@@ -622,6 +650,8 @@ if __name__ == "__main__":
                 output_dir=output_directory,
                 metrics_df=metrics_df,
                 openet_model=openet_model,
-                conus_shp=conus_shp
-            )   
+                conus_shp=conus_shp,
+                verbose=verbose
+            )  
+    print(f"Site analysis and mapping completed. Results saved to: {output_prefix}") 
         

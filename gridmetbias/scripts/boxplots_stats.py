@@ -83,18 +83,32 @@ def generate_boxplots(var_name):
     time_period_label = time_period_labels.get(plot_variable, plot_variable)
 
     # Boxplot 1: All sites
-    sns.boxplot(x=valid_data[plot_variable], ax=axes[0], palette="Set2")
+    sns.boxplot(
+        x=valid_data[plot_variable], ax=axes[0], 
+        palette="Set2", hue=valid_data[plot_variable], 
+        legend=False
+    )
     axes[0].set_title(f"{simplified_names[var_name]} Relative Bias ({time_period_label}) Across All Sites", fontsize=16, pad=10)
     axes[0].set_xlabel(f"{simplified_names[var_name]} Relative Bias", fontsize=12)
 
     # Boxplot 2: East vs. West of 100th meridian
-    sns.boxplot(x='Region', y=plot_variable, data=valid_data, ax=axes[1], palette="Set3")
+    sns.boxplot(
+        x='Region', y=plot_variable, 
+        data=valid_data, ax=axes[1], 
+        palette="Set3", hue='Region', 
+        legend=False
+    )
     axes[1].set_title(f"{simplified_names[var_name]} Relative Bias ({time_period_label}) by Region (East/West of 100th Meridian)", fontsize=16, pad=10)
     axes[1].set_xlabel("")
     axes[1].set_ylabel(f"{simplified_names[var_name]} Relative Bias", fontsize=12)
 
     # Boxplot 3: By Lumped Climate Zone
-    sns.boxplot(x='Lumped_Zone', y=plot_variable, data=valid_data, ax=axes[2], palette="Pastel2")
+    sns.boxplot(
+        x='Lumped_Zone', y=plot_variable, 
+        data=valid_data, ax=axes[2], 
+        palette="Pastel2", hue='Lumped_Zone', 
+        legend=False
+    )
     axes[2].set_title(f"{simplified_names[var_name]} Relative Bias ({time_period_label}) Grouped by Climate Zone", fontsize=16, pad=10)
     axes[2].set_xlabel("")
     axes[2].set_ylabel(f"{simplified_names[var_name]} Relative Bias", fontsize=12)
@@ -144,5 +158,3 @@ def generate_boxplots(var_name):
 if __name__ == '__main__':
     for var in var_names:
         generate_boxplots(var)
-
-

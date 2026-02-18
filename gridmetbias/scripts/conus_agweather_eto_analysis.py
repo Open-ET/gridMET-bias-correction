@@ -1,7 +1,6 @@
 # Script to analyze CONUS-AgWeather pre- and post-QC ETo data
 # Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
 
-import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt

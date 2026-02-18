@@ -19,15 +19,15 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 **Input Data Files:**
 | File | Path |
 |------|------|
-| Bias summary (ETo/ETr) | `../../Data/Point bias data/{var_name}_summary_comp_all_yrs.csv` |
-| Bias summary (other vars) | `../../Data/Point bias data/{var_name}_summary_comp_merged.csv` |
-| Climate GeoJSON | `../../Data/Point bias data/Climate/{var_name}_summary_comp_*_climate.geojson` |
+| Bias summary (ETo/ETr) | `../../Data/Point_bias_data/{var_name}_summary_comp_all_yrs.csv` |
+| Bias summary (other vars) | `../../Data/Point_bias_data/{var_name}_summary_comp_merged.csv` |
+| Climate GeoJSON | `../../Data/Point_bias_data/Climate/{var_name}_summary_comp_*_climate.geojson` |
 | Köppen info | `../../Data/koppen_ID_info.csv` |
 
 **Output Data Files:**
 | File | Path |
 |------|------|
-| Merged climate data | `../../Data/Point bias data/Climate/{var_name}_merged_with_climate.csv` |
+| Merged climate data | `../../Data/Point_bias_data/Climate/{var_name}_merged_with_climate.csv` |
 
 **Variables Processed:** `eto_mm`, `u2_ms`, `etr_mm`, `ea_kpa`, `srad_wm2`, `tmin_c`, `tmax_c`
 
@@ -43,7 +43,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 **Input Data Files:**
 | File | Path |
 |------|------|
-| Merged climate data | `../../Data/Point bias data/Climate/{var_name}_merged_with_climate.csv` |
+| Merged climate data | `../../Data/Point_bias_data/Climate/{var_name}_merged_with_climate.csv` |
 
 **Output Files:**
 | File | Path |
@@ -123,7 +123,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 ### 6. `OpenET_flux_grouped_scatter_plots.py`
 **Purpose:** Creates scatter plots comparing OpenET versus flux tower ET before and after ETo bias correction.
 
-**Authors:** Dr. John Volk, Dr. Sayantan Majumdar
+**Author:** Dr. John Volk
 
 **Input Data Files:**
 | File | Path |
@@ -144,6 +144,8 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 
 ### 7. `site_analysis_gridmet_openet.py`
 **Purpose:** Merges GridMET ETo and OpenET actual ET data with flux tower data for each site.
+
+**Author:** Dr. Sayantan Majumdar
 
 **Input Data Files:**
 | File | Path |
@@ -239,6 +241,71 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 
 ---
 
+### 11. `monthly_climos.py`
+**Purpose:** Creates a 2×2 panel plot of croplands monthly ET climatology comparing flux-tower closed/unclosed ET with corrected and uncorrected OpenET models (Figure 7).
+
+**Author:** Dr. John Volk
+
+**Input Data Files:**
+| File | Path |
+|------|------|
+| Monthly corrected | `../../Data/paired_flux_OpenET_data/merged_monthly_corrv3.csv` |
+| Monthly uncorrected | `../../Data/paired_flux_OpenET_data/merged_monthly_uncorrv3.csv` |
+
+**Output Files:**
+| File | Path |
+|------|------|
+| Climatology plot | `../../Plots/OpenET_accuracy/Figure7_croplands_monthly_climatology.jpg` |
+
+**OpenET Models Plotted:** Ensemble, eeMETRIC, SIMS, SSEBop
+
+---
+
+### 12. `monthly_error_delta_bias_heatmaps.py`
+**Purpose:** Generates monthly absolute error reduction heatmaps with bias sign overlay across land cover types and OpenET models (Figure 8). Visualizes how ETo bias correction affects absolute error in OpenET models.
+
+**Author:** Dr. John Volk
+
+**Input Data Files:**
+| File | Path |
+|------|------|
+| Monthly corrected | `../../Data/paired_flux_OpenET_data/merged_monthly_corrv3.csv` |
+| Monthly uncorrected | `../../Data/paired_flux_OpenET_data/merged_monthly_uncorrv3.csv` |
+
+**Output Files:**
+| File | Path |
+|------|------|
+| Heatmap plot | `../../Plots/OpenET_accuracy/Figure8_absolute_error_reduction_heatmaps.jpg` |
+
+**OpenET Models Plotted:** Ensemble, eeMETRIC, SIMS, SSEBop
+
+**Land Cover Types:** Croplands, Evergreen Forests, Grasslands, Mixed Forests, Shrublands, Wetlands
+
+---
+
+### 13. `monthly_ET_vs_ETo_error_scatter.py`
+**Purpose:** Creates scatter plots of absolute improvement in monthly OpenET ET (at EC sites) after applying ETo bias correction versus improvement in ETo at the same flux stations, grouped by land cover type (Figure 9).
+
+**Author:** Dr. John Volk
+
+**Input Data Files:**
+| File | Path |
+|------|------|
+| Monthly corrected ET | `../../Data/paired_flux_OpenET_data/merged_monthly_corrv3.csv` |
+| Monthly uncorrected ET | `../../Data/paired_flux_OpenET_data/merged_monthly_uncorrv3.csv` |
+| Monthly ETo data | `../../Data/flux_gridmet/flux_gridmet_monthly.csv` |
+
+**Output Files:**
+| File | Path |
+|------|------|
+| Scatter plot | `../../Plots/OpenET_accuracy/Figure9_error_reduction_scatter_by_landcover.jpg` |
+
+**OpenET Models Plotted:** Ensemble, eeMETRIC, SIMS, SSEBop
+
+**Land Cover Types:** Croplands, Evergreen Forests, Grasslands, Mixed Forests, Shrublands, Wetlands
+
+---
+
 
 ## Data Dependencies
 
@@ -247,8 +314,9 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 Data/
 ├── CONUS-AgWeather_v1/
 │   └── standardized_data/          # Station Excel files
-├── Point bias data/
+├── Point_bias_data/
 │   └── Climate/                    # Climate-merged bias data
+├── flux_gridmet/                   # Paired flux-gridMET monthly/daily data
 ├── paired_flux_OpenET_data/        # Flux tower and OpenET merged data
 ├── koppen_ID_info.csv              # Köppen climate zone info
 ├── openet_ground_station_master_list_cleaned_v4.csv
@@ -280,15 +348,17 @@ For a complete analysis workflow, run scripts in the following order:
 1. **Data Preparation and Visualization for gridMET bias correction paper:**
    - `data_formatting.py` - Merge bias data with climate zones
    - `boxplots_stats.py` - Create bias boxplots and statistics
+   - `OpenET_flux_grouped_scatter_plots.py` - Croplands monthly OpenET vs flux scatter plots
+   - `monthly_climos.py` - Monthly ET climatology
+   - `monthly_error_delta_bias_heatmaps.py` - Error reduction heatmaps
+   - `monthly_ET_vs_ETo_error_scatter.py` - Error reduction scatter by land cover
    - `site_analysis_gridmet_openet.py` - Merge GridMET and OpenET data
-   - `site_analysis_gridmet.py` - GridMET site analysis
    - `site_analysis_openet.py` - OpenET site analysis
-   - `OpenET_flux_grouped_scatter_plots.py` - Regional scatter plots
+   - `site_analysis_gridmet.py` - GridMET site analysis   
 
 2. **CONUS-AgWeather Visualization and Analysis:**
    - `gen_map.py` - Generate station location maps
    - `station_climate_plots.py` - Climate-grouped plots
-   - `station_crop_plots.py` - Crop-type-grouped plots (optional)
    - `conus_agweather_var_analysis.py` - Analyze individual variables
    - `conus_agweather_eto_analysis.py` - Analyze ETo specifically
 ---
@@ -298,17 +368,15 @@ For a complete analysis workflow, run scripts in the following order:
 ```
 pandas
 numpy
+geopandas
 matplotlib
 seaborn
-geopandas
-shapely
-plotly
-scikit-learn
 scipy
-openpyxl
+scikit-learn
+earthengine-api
+pyarrow
 tqdm
-dask
-earthengine-api (for station_crop_plots.py only)
+openpyxl
 ```
 
 ---
@@ -321,7 +389,7 @@ earthengine-api (for station_crop_plots.py only)
 
 ## Citations
 Volk, J. M., Dunkerly, C., Majumdar, S., Huntington, J. L., Minor, B. A., Kim, Y., Morton, C. G., ReVelle, P., Kilic, A., Melton, F., Allen, R. G., Pearson, C., Purdy, A. J., & Caldwell, T. G. (2026). 
-Assessing and Correcting Bias in Gridded Reference Evapotranspiration over Agricultural Lands Across the Contiguous United States. _In prep. for Agricultural Water Management_.
+Assessing and Correcting Bias in Gridded Reference Evapotranspiration over Agricultural Lands Across the Contiguous United States. _In prep. for Agricultural Water Management_. Zenodo dataset: https://doi.org/10.5281/zenodo.18673484
 
 Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). 
-CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States. _In prep. for Nature Scientific Data. Zenodo_. https://doi.org/10.5281/zenodo.18122156
+CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States. _Under review in Nature Scientific Data_. https://doi.org/10.31223/X56T9Z. Zenodo dataset: https://doi.org/10.5281/zenodo.18122157.

@@ -9,17 +9,36 @@ Data/
 ├── koppen_ID_info.csv                        # Köppen climate zone information
 ├── openet_ground_station_master_list_cleaned_v4.csv  # Master station list
 ├── climateClass_poly_diss/                   # Climate classification shapefiles
-├── CONUS-AgWeather_v1/                       # CONUS-AgWeather dataset [EXTERNAL]
+├── CONUS-AgWeather_v1/                       # CONUS-AgWeather dataset
+│   ├── metadata_for_publication.csv
+│   ├── standardized_data/                    # Station Excel files with QC data
+│   ├── after_qc_composite_graphs/            # Composite graphs after QC
+│   ├── before_qc_composite_graphs/           # Composite graphs before QC
+│   ├── log_files/                            # QC processing logs
+│   └── variable_qc_graphs/                   # Variable-specific QC visualizations
 ├── flux_data/                                # GridMET reference ET data
 ├── flux_ET_dataset/                          # Flux tower ET observations
-├── paired_flux_OpenET_data/                  # Merged flux and OpenET data
-├── Point bias data/                          # Station-level bias summaries
+│   ├── daily_data_files/
+│   ├── monthly_data_files/
+│   └── station_metadata.xlsx
+├── flux_gridmet/                             # Paired flux-gridMET data
+├── metadata/                                 # Station metadata
 ├── Outputs/                                  # Analysis output files
-├── states/                                   # US state boundary shapefiles (extract from states.zip)
-└── supporting_files/                         # Additional supporting data [EXTERNAL]
+├── paired_flux_OpenET_data/                  # Merged flux and OpenET data
+├── Point_bias_data/                          # Station-level bias summaries
+│   └── Climate/                              # Climate-joined bias data
+├── states/                                   # US state boundary shapefiles
+└── supporting_files/                         # Additional supporting data
+    └── Station_Climate/                      # Station climate parquet files
 ```
 
-**Note:** Directories marked `[EXTERNAL]` contain large datasets not included in the repository. See [External Data Requirements](#external-data-requirements) for download instructions.
+The data required for this project are available from Zenodo:
+
+**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18122157.svg)](https://doi.org/10.5281/zenodo.18122157)
+
+**Input and Output Datasets and Plots for gridMET bias correction**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18673484.svg)](https://doi.org/10.5281/zenodo.18673484)
+
+Download the data archive and extract its contents into the `Data/` directory. The CONUS-AgWeather_v1 zip archive from Zenodo must also be extracted within `Data/` so that the `CONUS-AgWeather_v1/` directory resides at `Data/CONUS-AgWeather_v1/`.
 
 ---
 
@@ -29,7 +48,7 @@ Data/
 
 | Data File | Path | Description |
 |-----------|------|-------------|
-| Point bias CSVs | `Point bias data/*.csv` | Station-level bias ratio summaries for all variables |
+| Point bias CSVs | `Point_bias_data/*.csv` | Station-level bias ratio summaries for all variables |
 | Climate shapefile | `climateClass_poly_diss/climateClass_poly_diss.shp` | Köppen climate zone polygons |
 | Daily station files | `flux_ET_dataset/daily_data_files/` | Daily flux tower observations |
 | Monthly station files | `flux_ET_dataset/monthly_data_files/` | Monthly flux tower observations |
@@ -40,16 +59,16 @@ Data/
 
 | Data File | Path | Description |
 |-----------|------|-------------|
-| Bias summaries (ETo/ETr) | `Point bias data/{var}_summary_comp_all_yrs.csv` | ETo and ETr bias summaries |
-| Bias summaries (other) | `Point bias data/{var}_summary_comp_merged.csv` | Other variable bias summaries |
-| Climate GeoJSON | `Point bias data/Climate/{var}_*_climate.geojson` | Climate-joined bias data |
+| Bias summaries (ETo/ETr) | `Point_bias_data/{var}_summary_comp_all_yrs.csv` | ETo and ETr bias summaries |
+| Bias summaries (other) | `Point_bias_data/{var}_summary_comp_merged.csv` | Other variable bias summaries |
+| Climate GeoJSON | `Point_bias_data/Climate/{var}_*_climate.geojson` | Climate-joined bias data |
 | Köppen info | `koppen_ID_info.csv` | Climate zone codes and descriptions |
 
 ### Script: `boxplots_stats.py`
 
 | Data File | Path | Description |
 |-----------|------|-------------|
-| Climate-merged data | `Point bias data/Climate/{var}_merged_with_climate.csv` | Output from `data_formatting.py` |
+| Climate-merged data | `Point_bias_data/Climate/{var}_merged_with_climate.csv` | Output from `data_formatting.py` |
 
 ### Script: `gen_map.py`
 
@@ -75,10 +94,10 @@ Data/
 
 | Data File | Path | Description |
 |-----------|------|-------------|
-| Monthly corrected | `paired_flux_OpenET_data/merged_monthly_corrv2.csv` | Bias-corrected monthly data |
-| Monthly uncorrected | `paired_flux_OpenET_data/merged_monthly_uncorrv2.csv` | Uncorrected monthly data |
-| Daily corrected | `paired_flux_OpenET_data/merged_daily_corrv2.csv` | Bias-corrected daily data |
-| Daily uncorrected | `paired_flux_OpenET_data/merged_daily_uncorrv2.csv` | Uncorrected daily data |
+| Monthly corrected | `paired_flux_OpenET_data/merged_monthly_corrv3.csv` | Bias-corrected monthly data |
+| Monthly uncorrected | `paired_flux_OpenET_data/merged_monthly_uncorrv3.csv` | Uncorrected monthly data |
+| Daily corrected | `paired_flux_OpenET_data/merged_daily_corrv3.csv` | Bias-corrected daily data |
+| Daily uncorrected | `paired_flux_OpenET_data/merged_daily_uncorrv3.csv` | Uncorrected daily data |
 
 ### Script: `site_analysis_gridmet_openet.py`
 
@@ -93,14 +112,29 @@ Data/
 |-----------|------|-------------|
 | Station metadata | CSV with station information | Station IDs and coordinates |
 | Station Excel files | `CONUS-AgWeather_v1/standardized_data/*.xlsx` | Station observations |
-| Climate classification | `Point bias data/Climate/*_merged_with_climate.csv` | Station climate zones |
+| Climate classification | `Point_bias_data/Climate/*_merged_with_climate.csv` | Station climate zones |
 
-### Script: `station_crop_plots.py`
+### Script: `monthly_climos.py`
 
 | Data File | Path | Description |
 |-----------|------|-------------|
-| Station DataFrame | With station ID, longitude, latitude | Station locations |
-| Station Excel files | Station data directory | Station observations |
+| Monthly corrected | `paired_flux_OpenET_data/merged_monthly_corrv3.csv` | Bias-corrected monthly data |
+| Monthly uncorrected | `paired_flux_OpenET_data/merged_monthly_uncorrv3.csv` | Uncorrected monthly data |
+
+### Script: `monthly_error_delta_bias_heatmaps.py`
+
+| Data File | Path | Description |
+|-----------|------|-------------|
+| Monthly corrected | `paired_flux_OpenET_data/merged_monthly_corrv3.csv` | Bias-corrected monthly data |
+| Monthly uncorrected | `paired_flux_OpenET_data/merged_monthly_uncorrv3.csv` | Uncorrected monthly data |
+
+### Script: `monthly_ET_vs_ETo_error_scatter.py`
+
+| Data File | Path | Description |
+|-----------|------|-------------|
+| Monthly corrected ET | `paired_flux_OpenET_data/merged_monthly_corrv3.csv` | Bias-corrected monthly data |
+| Monthly uncorrected ET | `paired_flux_OpenET_data/merged_monthly_uncorrv3.csv` | Uncorrected monthly data |
+| Monthly ETo data | `flux_gridmet/flux_gridmet_monthly.csv` | Paired flux-gridMET monthly data |
 
 ---
 
@@ -123,18 +157,18 @@ Köppen-Geiger climate classification shapefile for the contiguous United States
 | `climateClass_poly_diss.dbf` | Attribute table with gridcode values |
 | `climateClass_poly_diss.prj` | Projection information |
 
-### `CONUS-AgWeather_v1/` [EXTERNAL]
+### `CONUS-AgWeather_v1/`
 
-CONUS-AgWeather dataset containing quality-controlled agricultural weather station data (~5.7 GB). Available from [Zenodo](https://doi.org/10.5281/zenodo.18122156).
+CONUS-AgWeather dataset containing quality-controlled agricultural weather station data (~5.7 GB). Available from [Zenodo](https://doi.org/10.5281/zenodo.18122157).
 
-| Subdirectory/File | Description |
-|-------------------|-------------|
-| `metadata_for_publication.csv` | Station metadata for publication |
-| `standardized_data/` | Excel files with corrected data, original data, and delta (correction) values |
-| `after_qc_composite_graphs/` | Composite graphs after QC |
-| `before_qc_composite_graphs/` | Composite graphs before QC |
-| `log_files/` | QC processing logs |
-| `variable_qc_graphs/` | Variable-specific QC visualizations |
+| Subdirectory/File | Description | Size |
+|-------------------|-------------|------|
+| `standardized_data/` | Excel files with corrected data, original data, and delta (correction) values | ~1.2 GB |
+| `variable_qc_graphs/` | Variable-specific QC visualizations | ~2.1 GB |
+| `after_qc_composite_graphs/` | Composite graphs after QC | ~1.2 GB |
+| `before_qc_composite_graphs/` | Composite graphs before QC | ~1.2 GB |
+| `log_files/` | QC processing logs | ~3.1 MB |
+| `metadata_for_publication.csv` | Station metadata for publication | — |
 
 **Excel file sheets:**
 - `Corrected Data` - QC-corrected observations
@@ -149,15 +183,28 @@ CONUS-AgWeather dataset containing quality-controlled agricultural weather stati
 
 ### `flux_ET_dataset/`
 
-Flux tower evapotranspiration observations.
+Flux tower evapotranspiration observations (~204 MB).
 
 | File/Directory | Description |
 |----------------|-------------|
 | `daily_data_files/` | Daily flux tower observations |
 | `monthly_data_files/` | Monthly aggregated observations |
-| `graphical_files/` | Visualization outputs |
 | `station_metadata.xlsx` | Station coordinates, names, and metadata |
-| `variable_explanation.xlsx` | Variable definitions and units |
+
+### `flux_gridmet/`
+
+Paired flux tower and gridMET reference ET data (~12 MB).
+
+| File | Description |
+|------|-------------|
+| `flux_gridmet_daily.csv` | Daily paired flux-gridMET data |
+| `flux_gridmet_monthly.csv` | Monthly paired flux-gridMET data |
+
+### `metadata/`
+
+| File | Description |
+|------|-------------|
+| `station_metadata_from_flux_gridmet.csv` | Station metadata extracted from flux-gridMET pairing |
 
 ### `paired_flux_OpenET_data/`
 
@@ -175,9 +222,9 @@ Merged flux tower and OpenET model estimates.
 
 **Columns include:** SITE_ID, DATE, Latitude, Longitude, General classification, OpenET model estimates (EEMETRIC, SSEBOP, SIMS, GEESEBAL, PTJPL, DISALEXI, ensemble_mean), Closed/Unclosed flux values
 
-### `Point bias data/`
+### `Point_bias_data/`
 
-Station-level bias ratio summaries.
+Station-level bias ratio summaries (~18 MB).
 
 | File Pattern | Description |
 |--------------|-------------|
@@ -192,7 +239,7 @@ Station-level bias ratio summaries.
 - `annual_mean`, `summer_mean`, `growseason_mean` - Seasonal aggregates
 - `start_year`, `end_year` - Record period
 
-#### `Point bias data/Climate/`
+#### `Point_bias_data/Climate/`
 
 Climate-joined bias data and GEE extraction outputs.
 
@@ -217,12 +264,7 @@ Analysis output files.
 
 ### `states/`
 
-US state boundary shapefile for mapping (~42 MB). The repository includes `states.zip` which can be extracted to create this directory:
-
-```bash
-cd Data/
-unzip states.zip
-```
+US state boundary shapefile for mapping (~42 MB).
 
 | File | Description |
 |------|-------------|
@@ -230,27 +272,32 @@ unzip states.zip
 | `states.dbf` | Attribute table with STATE_ABBR |
 | `states.prj` | Projection (typically EPSG:4326) |
 
-### `supporting_files/` [EXTERNAL]
+### `supporting_files/`
 
-Additional supporting datasets (~1.3 GB total).
+Additional supporting datasets (~320 MB).
 
 | Subdirectory | Description | Size |
 |--------------|-------------|------|
 | `Station_Climate/` | Station climate classification parquet files | ~320 MB |
-| `Station_CDL/` | Station CDL (Cropland Data Layer) data | ~1 GB |
 
 ---
 
 ## External Data Requirements
 
-The following directories contain large datasets that must be obtained separately:
+Data directories are available from Zenodo. CONUS-AgWeather_v1 has its own DOI; all other data and plots are under a separate DOI.
 
 | Directory | Size | Source |
 |-----------|------|--------|
-| `CONUS-AgWeather_v1/` | ~5.7 GB | [Zenodo](https://doi.org/10.5281/zenodo.18122156) |
-| `supporting_files/` | ~1.3 GB | Generated by analysis scripts or contact authors |
-
-**Note:** `states/` can be created by extracting the included `states.zip` file.
+| `CONUS-AgWeather_v1/` | ~5.7 GB | [Zenodo](https://doi.org/10.5281/zenodo.18122157) |
+| `supporting_files/` | ~320 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
+| `flux_ET_dataset/` | ~204 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
+| `Outputs/` | ~173 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
+| `paired_flux_OpenET_data/` | ~436 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
+| `states/` | ~42 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
+| `flux_data/` | ~25 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
+| `Point_bias_data/` | ~18 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
+| `flux_gridmet/` | ~12 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
+| `climateClass_poly_diss/` | ~8 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673484) |
 
 ---
 
@@ -277,3 +324,13 @@ The following directories contain large datasets that must be obtained separatel
 - **USDA CDL:** Cropland Data Layer crop classification
 - **NLCD:** National Land Cover Database
 - **Köppen-Geiger:** Climate classification system
+
+---
+
+## Citations
+
+Volk, J. M., Dunkerly, C., Majumdar, S., Huntington, J. L., Minor, B. A., Kim, Y., Morton, C. G., ReVelle, P., Kilic, A., Melton, F., Allen, R. G., Pearson, C., Purdy, A. J., & Caldwell, T. G. (2026). 
+Assessing and Correcting Bias in Gridded Reference Evapotranspiration over Agricultural Lands Across the Contiguous United States. _In prep. for Agricultural Water Management_. Zenodo dataset: https://doi.org/10.5281/zenodo.18673484
+
+Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). 
+CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States. _Under review in Nature Scientific Data_. https://doi.org/10.31223/X56T9Z. Zenodo dataset: https://doi.org/10.5281/zenodo.18122157.

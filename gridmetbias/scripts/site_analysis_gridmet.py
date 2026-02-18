@@ -12,7 +12,7 @@ import geopandas as gpd
 import numpy as np
 import os
 import warnings
-warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore")
 import seaborn as sns
 import site_analysis_openet as openet
 import matplotlib.pyplot as plt
@@ -117,6 +117,7 @@ def cropland_site_analysis_gridmet(
         output_dir: str,
         gridmet_col: str = 'GRIDMET_REFERENCE_ET',
         flux_col: str = 'ASCE_ETo',
+        verbose: bool = False
 ) -> None:
     """
     Perform site analysis for gridMET data over croplands.
@@ -128,6 +129,9 @@ def cropland_site_analysis_gridmet(
         merged_gridmet_flux_csv (str): Path to the merged CSV file containing gridMET and flux tower data. 
         This file is generated from corr_analysis_gridmet.py.
         output_dir (str): Directory to save the output plots and metrics.
+        gridmet_col (str): Column name for gridMET reference ET in the CSV file. Default is 'GRIDMET_REFERENCE_ET'.
+        flux_col (str): Column name for flux tower reference ET in the CSV file. Default is 'ASCE_ETo'.
+        verbose (bool): If True, print detailed logs during processing. Default is False.
 
     Returns:
         None
@@ -138,7 +142,8 @@ def cropland_site_analysis_gridmet(
         # Create output directory if it doesn't exist
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         metrics_df = pd.DataFrame()
-        print("Starting site analysis and plotting for gridMET data...")
+        if verbose:
+            print("Starting site analysis and plotting for gridMET data...")
         gridmet_flux_df = pd.read_csv(gridmet_flux_csv)[[
             "SITE_ID", "Latitude", "Longitude", "DATE",
             "General classification",
@@ -165,17 +170,20 @@ def cropland_site_analysis_gridmet(
             output_dir=outdir
         )
         metrics_df.to_csv(metrics_csv_path, index=False)
-        print(f"Metrics saved to {metrics_csv_path}")
+        if verbose:
+            print(f"Metrics saved to {metrics_csv_path}")
     else:  
         metrics_df = pd.read_csv(metrics_csv_path)
-        print(f"Metrics loaded from {metrics_csv_path}")
+        if verbose:
+            print(f"Metrics loaded from {metrics_csv_path}")
     return metrics_df    
 
 
 def query_metrics(
         metrics_df: pd.DataFrame, 
         plot_dir: str,
-        error_metric: str | list [str] = "MBE"
+        error_metric: str | list [str] = "MBE",
+        verbose: bool = False
 ) -> pd.DataFrame:
     """
     Query the metrics dataframe to find the sites where the bias correction improves the gridMET reference ET.
@@ -186,6 +194,7 @@ def query_metrics(
         function should be in this directory.
         error_metric (str | list[str]): The error metric to use for filtering. Default is "MBE". 
         Combinations of metrics can be provided as a list. For example, ["r2", "MAE", "MBE"].
+        verbose (bool): If True, print detailed logs during processing. Default is False.
 
     Returns:
         A tuple of (pd.DataFrame, str): DataFrame containing the site IDs where the bias correction improves the 
@@ -221,7 +230,8 @@ def query_metrics(
         error_metric = error_metric[0]
     if isinstance(error_metric, list) and len(error_metric) > 1:
         for metric in error_metric:
-            print(f"Filtering for metric: {metric}")
+            if verbose:
+                print(f"Filtering for improved sites based on {metric}...")
             if metric == "r2":
                 improved_sites = improved_sites[improved_sites['r2_diff'] > 0]
             elif metric in ["RMSE", "MAE", "MBE"]:
@@ -240,10 +250,12 @@ def query_metrics(
     
     improved_site_ids = improved_sites['SITE_ID'].tolist()
     if not improved_site_ids:
-        print(f"No sites found with improved performance using metrics: {error_metric}")
+        if verbose:
+            print(f"No sites found with improved performance based on {error_metric}.")
         return []
-    print(f"Sites with improved performance using metrics: {error_metric}:")
-    print(improved_site_ids)
+    if verbose:
+        print(f"Sites with improved performance using metrics: {error_metric}:")
+        print(improved_site_ids)
     improved_dir = Path(plot_dir) / f"Improved_Sites/{error_metric_type}"
     improved_dir.mkdir(parents=True, exist_ok=True)
     # Copy the plots for the improved sites to the output directory
@@ -253,9 +265,11 @@ def query_metrics(
             # move the site directory to the improved directory
             improved_site_dir = improved_dir / site
             copytree(site_plots_dir, improved_site_dir, dirs_exist_ok=True)
-            print(f"Copied plots for site {site} to {improved_site_dir}")
+            if verbose:
+                print(f"Copied plots for site {site} to {improved_site_dir}")
         else:
-            print(f"No plots found for site {site} in {plot_dir}. Skipping.")
+            if verbose:
+                print(f"No plots found for site {site} in {plot_dir}. Skipping.")
     improved_sites.to_csv(improved_dir / f"gridmet_improved_metrics.csv", index=False)
     return improved_sites, improved_dir
 
@@ -263,7 +277,8 @@ def query_metrics(
 def create_us_map_improved_sites(
         conus_shp: str,
         output_dir: str,
-        metrics_df: pd.DataFrame
+        metrics_df: pd.DataFrame,
+        verbose: bool = False
 ) -> None:
     """
     Create a US map showing improved sites with different color codes based on improvement metrics.
@@ -273,6 +288,7 @@ def create_us_map_improved_sites(
         conus_shp (str): Path to the CONUS shapefile.
         output_dir (str): Directory to save the map.
         metrics_df (pd.DataFrame): DataFrame containing the metrics for each site and model.
+        verbose (bool): If True, print detailed logs during processing. Default is False.
     
     Returns:
         None
@@ -285,8 +301,9 @@ def create_us_map_improved_sites(
         conus_gdf = conus_gdf[~conus_gdf['STATE_ABBR'].isin(['AK', 'HI'])]
         conus_gdf = conus_gdf.to_crs("ESRI:102004")  # Albers Equal Area for CONUS
     except Exception as e:
-        print(f"Failed to load CONUS boundaries from {conus_shp}: {e}")
-        print("Creating map without state boundaries.")
+        if verbose:
+            print(f"Failed to load CONUS boundaries from {conus_shp}: {e}")
+            print("Creating map without state boundaries.")
         conus_gdf = None
     else:
         conus_gdf = conus_gdf.to_crs("ESRI:102004")  # Albers Equal Area for CONUS
@@ -306,7 +323,8 @@ def create_us_map_improved_sites(
             improved_sites, improved_dir = query_metrics(
                 metrics_df=metrics_df,
                 plot_dir=output_dir,
-                error_metric=metrics
+                error_metric=metrics,
+                verbose=verbose
             )
             
             if isinstance(improved_sites, pd.DataFrame) and not improved_sites.empty:
@@ -320,12 +338,14 @@ def create_us_map_improved_sites(
                 }
                 improved_sites_gdf = save_improved_sites_as_geojson(
                     improved_sites=improved_sites,
-                    output_dir=improved_dir
+                    output_dir=improved_dir,
+                    verbose=verbose
                 )
                 # convert improved_sites_gdf to dictionary
                 improved_sites_dict[label]['gdf'] = improved_sites_gdf
         except Exception as e:
-            print(f"Error processing {label}: {e}")
+            if verbose:
+                print(f"Error processing metric combination {metrics}: {e}")
             continue
     
     # Create the map
@@ -425,8 +445,8 @@ def create_us_map_improved_sites(
     map_path = Path(output_dir) / "gridmet_improved_sites_map.png"
     plt.savefig(map_path, dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
-    
-    print(f"US map saved to {map_path}")
+    if verbose:
+        print(f"US map saved to {map_path}")
     
     # Create a summary table
     summary_data = []
@@ -441,12 +461,14 @@ def create_us_map_improved_sites(
         summary_df = pd.DataFrame(summary_data)
         summary_path = Path(output_dir) / f"gridmet_improved_sites_summary.csv"
         summary_df.to_csv(summary_path, index=False)
-        print(f"Summary table saved to {summary_path}")
+        if verbose:
+            print(f"Summary table saved to {summary_path}")
 
 
 def save_improved_sites_as_geojson(
         improved_sites: pd.DataFrame, 
-        output_dir: str
+        output_dir: str,
+        verbose: bool = False
 ) -> gpd.GeoDataFrame:
     """
     Save the improved sites as a GeoJSON file.
@@ -454,6 +476,7 @@ def save_improved_sites_as_geojson(
     Args:
         improved_sites (pd.DataFrame): DataFrame containing the improved sites.
         output_dir (str): Directory to save the GeoJSON files.
+        verbose (bool): If True, print detailed logs during processing. Default is False.
 
     Returns:
         gpd.GeoDataFrame: GeoDataFrame containing the improved sites.
@@ -465,12 +488,13 @@ def save_improved_sites_as_geojson(
             improved_sites["Longitude"], 
             improved_sites["Latitude"]
         ),
-        crs="EPSG:4326"  # WGS 84
+        crs="EPSG:4326"  # WGS84
     )
 
     geojson_path = Path(output_dir) / "improved_sites.geojson"
     gdf.to_file(geojson_path, driver="GeoJSON")
-    print(f"Saved improved sites to {geojson_path}")
+    if verbose:
+        print(f"Improved sites saved to {geojson_path}")
     return gdf
 
 if __name__ == "__main__":
@@ -480,18 +504,23 @@ if __name__ == "__main__":
         'monthly': "../../Plots/GridMET_Plots/All/GridMET_Monthly_All_Station_Data.csv"
     }
     conus_shp = '../../Data/states/states.shp'
+    output_prefix = "../../Plots/Site_Analysis_GridMET/"
+    verbose = False  # Set to True to enable verbose output
+    print(f"Starting site analysis for gridMET data with data types: {list(gridmet_flux_csv_dict.keys())}\nThis may take a while...")
 
     # Create US map showing all improved sites with different color codes
     for dt in gridmet_flux_csv_dict.keys():
-        output_directory = f"../../Plots/Site_Analysis_GridMET/{dt}/"
+        output_directory = f"{output_prefix}{dt}/"
         metrics_df = cropland_site_analysis_gridmet(
             gridmet_flux_csv=gridmet_flux_csv_dict[dt],
-            output_dir=output_directory
+            output_dir=output_directory,
+            verbose=verbose
         )
         create_us_map_improved_sites(
             conus_shp=conus_shp,
             output_dir=output_directory,
-            metrics_df=metrics_df
+            metrics_df=metrics_df,
+            verbose=verbose
         )
 
         openet_improved_sites = f"../../Plots/Site_Analysis_OpenET/{dt}/All_metrics.csv"
@@ -500,7 +529,8 @@ if __name__ == "__main__":
         common_output_dir = Path(output_directory) / "Common_Sites"
         common_output_dir.mkdir(parents=True, exist_ok=True)
         if common_sites:
-            print(f"Common sites between gridMET and OpenET for {dt}: {common_sites}")
+            if verbose:
+                print(f"Common sites between gridMET and OpenET for {dt}: {common_sites}")
             openet_metrics_df = openet_metrics_df[openet_metrics_df['SITE_ID'].isin(common_sites)]
             openet_metrics_df.to_csv(common_output_dir / "OpenET_Common_Sites_Metrics.csv", index=False)
             for openet_model in openet_metrics_df['openet_model'].unique():
@@ -508,7 +538,8 @@ if __name__ == "__main__":
                     conus_shp=conus_shp,
                     output_dir=common_output_dir,
                     metrics_df=openet_metrics_df,
-                    openet_model=openet_model
+                    openet_model=openet_model,
+                    verbose=verbose
                 )  
 
             gridmet_metrics_df = metrics_df[metrics_df['SITE_ID'].isin(common_sites)]
@@ -516,6 +547,7 @@ if __name__ == "__main__":
             create_us_map_improved_sites(
                 conus_shp=conus_shp,
                 output_dir=common_output_dir,
-                metrics_df=gridmet_metrics_df
+                metrics_df=gridmet_metrics_df,
+                verbose=verbose
         )
-
+    print(f"Site analysis for gridMET data completed.\nMaps and metrics have been saved to {output_prefix}.\n")

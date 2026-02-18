@@ -169,3 +169,7 @@ __pycache__
 Data/*
 !Data/README.md
 Plots/*
+!Plots/README.md
+Data.zip
+Plots.zip
+CONUS-AgWeather_v1.zip

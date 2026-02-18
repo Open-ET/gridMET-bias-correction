@@ -6,7 +6,6 @@
 import pandas as pd
 import numpy as np
 import geopandas
-import re
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
