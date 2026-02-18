@@ -145,7 +145,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 ### 7. `site_analysis_gridmet_openet.py`
 **Purpose:** Merges GridMET ETo and OpenET actual ET data with flux tower data for each site.
 
-**Author:** Dr. Sayantan Majumdar
+**Authors:** Dr. Sayantan Majumdar, Dr. John Volk
 
 **Input Data Files:**
 | File | Path |
@@ -169,7 +169,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 ### 8. `site_analysis_gridmet.py`
 **Purpose:** Performs site analysis for gridMET reference ET data, generating scatter plots of gridMET ET against flux tower ET.
 
-**Author:** Dr. Sayantan Majumdar
+**Author:** Dr. Sayantan Majumdar, Dr. John Volk
 
 **Input Data Files:**
 | File | Path |
@@ -191,7 +191,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 ### 9. `site_analysis_openet.py`
 **Purpose:** Performs site analysis for OpenET data, generating scatter plots of OpenET ET against flux tower ET for different models.
 
-**Author:** Dr. Sayantan Majumdar
+**Author:** Dr. Sayantan Majumdar, Dr. John Volk
 
 **Input Data Files:**
 | File | Path |

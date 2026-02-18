@@ -28,7 +28,7 @@ gridmetbias/
 
 ## Main Script: `corr_analysis_gridmet.py`
 
-**Author:** Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+**Authors:** Dr. Sayantan Majumdar, Dr. John Volk
 
 This is the primary entry point for running the complete bias analysis workflow. It orchestrates multiple analysis tasks including correlation plots, gridMET bias comparisons, and bias distribution visualizations.
 
@@ -78,7 +78,7 @@ The `biaslibs` package contains reusable functions for bias analysis, correlatio
 
 ### `biasops.py` - Bias Operations
 
-**Author:** Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+**Authors:** Dr. Sayantan Majumdar
 
 Core functions for bias ratio analysis and correlation plotting.
 
@@ -103,7 +103,7 @@ Core functions for bias ratio analysis and correlation plotting.
 
 ### `geeops.py` - Google Earth Engine Operations
 
-**Author:** Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+**Author:** Dr. Sayantan Majumdar
 
 Functions for extracting geospatial data from Google Earth Engine at station locations.
 
