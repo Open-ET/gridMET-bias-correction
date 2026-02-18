@@ -5,6 +5,7 @@ It calculates error metrics such as R2, RMSE, MAE, MBE, and Pearson correlation,
 and saves the results in a CSV file.
 
 Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+Modified by: Dr. John Volk (john.volk@dri.edu)
 """
 
 import pandas as pd

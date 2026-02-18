@@ -1,7 +1,10 @@
-# Script to generate maps of evapotranspiration observation sites
-# This script reads a CSV file containing site information and plots the number of observations, years of data, and average completeness.
-# Author: Christian Dunkerly (christian.dunkerly@dri.edu)
-# Modified by: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+"""
+Script to generate maps of evapotranspiration observation sites
+This script reads a CSV file containing site information and plots the number of observations, years of data, and average completeness.
+
+Author: Christian Dunkerly (christian.dunkerly@dri.edu)
+Modified by: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+"""
 
 import pandas as pd
 import numpy as np

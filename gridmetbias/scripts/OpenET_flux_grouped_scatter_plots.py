@@ -1,6 +1,8 @@
 """
 Croplands monthly OpenET ET vs. closed flux-tower ET, comparing corrected vs uncorrected (Figure 6-style).
 2×2 panels (Ensemble, eeMETRIC, SIMS, SSEBop) with in-panel r²/MBE/MAE and a compact outside legend.
+
+Author: Dr. John Volk (john.volk@dri.edu)
 """
 
 import os

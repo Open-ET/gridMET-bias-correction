@@ -2,6 +2,7 @@
 Main script for calculating biases in each weather station variable and making box plots
 and CSV files with statistics grouped by east/west U.S., and climate zones. Run this script
 after running "data_formatting.py"
+
 Author: Dr. John Volk (john.volk@dri.edu)
 Modified by: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
 """

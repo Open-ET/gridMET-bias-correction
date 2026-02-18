@@ -1,6 +1,8 @@
 """
 Main script for running the correlation analysis on the GridMET bias ratio data.
+
 Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+Modified by: Dr. John Volk (john.volk@dri.edu)
 """
 
 import calendar

@@ -1,5 +1,8 @@
-# Script to analyze CONUS-AgWeather variables (Rs, Rso, etc.) pre- and post-QC
-# Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+"""
+Script to analyze CONUS-AgWeather variables (Rs, Rso, etc.) pre- and post-QC
+
+Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+"""
 
 import pandas as pd
 import numpy as np

@@ -1,5 +1,8 @@
-# Plot station variables grouped by Koppen climate classification
-# author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+"""
+Plot station variables grouped by Koppen climate classification
+
+Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+"""
 
 import pandas as pd
 import os

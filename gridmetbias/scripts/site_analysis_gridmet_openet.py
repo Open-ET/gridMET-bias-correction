@@ -1,4 +1,10 @@
-# This script performs site analysis for GridMET ETo and OpenET actual ET data for each site.
+"""
+This script performs site analysis for GridMET ETo and OpenET actual ET data for each site.
+
+Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
+Modified by: Dr. John Volk (john.volk@dri.edu)
+"""
+
 import pandas as pd
 import zipfile
 import warnings

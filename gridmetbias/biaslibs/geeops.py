@@ -1,5 +1,6 @@
 """
 Contains functons related to GEE operations and data extraction.
+
 Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
 """
 
