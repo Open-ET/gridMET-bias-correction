@@ -50,16 +50,29 @@ VARIABLES = [
 
 
 def _compute_station_stats(args):
-    """Worker: returns a dict of per-variable stats for one station."""
+    """Worker: returns a dict of per-variable stats for one station.
+
+    "Average annual record completeness" follows the convention used by the
+    original station_map: for each calendar year present in the station's
+    record, the per-year ratio is (valid days for this variable) / (days the
+    station was active that year). The average across all such years is the
+    station's completeness for that variable. Years where the station was
+    active but the variable was not yet collected contribute 0% — this is
+    intentional and is what makes the per-variable completeness sensitive to
+    late-added variables (e.g. ETr added years into a station's life).
+    """
     station_filepath, station_id = args
     try:
-        df = pd.read_excel(station_filepath, sheet_name='Corrected Data')
+        df = pd.read_parquet(station_filepath)
     except Exception as exc:
         print(f'  ! failed to read {station_filepath}: {exc}')
         return None
 
     df['Date'] = pd.to_datetime(df['Date'])
     df['_year'] = df['Date'].dt.year
+    # Days the station was active in each calendar year (rows in the parquet
+    # represent the station's full operating record).
+    yearly_active = df.groupby('_year').size()
 
     row = {'Station': station_id}
     for short, col in VARIABLES:
@@ -76,12 +89,10 @@ def _compute_station_stats(args):
         if obs_count == 0:
             completeness = 0.0
         else:
-            # Density of valid observations within the station's operating
-            # window (matches the master_list "Average Annual Completeness"
-            # convention used by the original station_map figure).
-            valid_dates = df.loc[mask, 'Date']
-            span_days = (valid_dates.max() - valid_dates.min()).days + 1
-            completeness = obs_count / span_days * 100.0
+            yearly_obs = (df.loc[mask].groupby('_year').size()
+                          .reindex(yearly_active.index, fill_value=0))
+            yearly_ratio = yearly_obs / yearly_active * 100.0
+            completeness = float(yearly_ratio.mean())
 
         row[f'{short}__obs_count'] = obs_count
         row[f'{short}__years'] = years
@@ -92,11 +103,12 @@ def _compute_station_stats(args):
 
 def build_stats_dataframe(data_dir, n_workers=8):
     metadata = pd.read_csv(os.path.join(data_dir, 'metadata_for_publication.csv'))
-    standardized_dir = os.path.join(data_dir, 'standardized_data_xlsx')
+    parquet_dir = os.path.join(data_dir, 'standardized_data_parquet')
 
     tasks = []
     for _, m in metadata.iterrows():
-        fp = os.path.join(standardized_dir, m['Filename'])
+        base = os.path.splitext(m['Filename'])[0]
+        fp = os.path.join(parquet_dir, f'{base}_corrected.parquet')
         if os.path.isfile(fp):
             tasks.append((fp, m['Station']))
 
@@ -141,7 +153,12 @@ def plot_variable_map(merged, contiguous_states, short_name, out_dir):
         (comp_col, f'Average annual {short_name} record completeness (%)', '(c)', 'completeness'),
     ]
 
-    if (merged[obs_col] > 0).sum() == 0:
+    # Only stations with at least one valid observation of this variable
+    # should appear on the map. Without this filter, stations with zero obs
+    # get clipped up to the lowest bin edge and falsely plotted as if they
+    # had data (notably affects RHAvg/RHMax/RHMin).
+    with_data = merged.loc[merged[obs_col] > 0].copy()
+    if len(with_data) == 0:
         print(f'  no stations have data for {short_name}, skipping')
         return
 
@@ -153,8 +170,8 @@ def plot_variable_map(merged, contiguous_states, short_name, out_dir):
 
     fig, axes = plt.subplots(3, 1, figsize=(25, 36))
 
-    geometry = [Point(xy) for xy in zip(merged['Longitude'], merged['Latitude'])]
-    gdf = geopandas.GeoDataFrame(merged.copy(), geometry=geometry, crs='EPSG:4326').to_crs('ESRI:102004')
+    geometry = [Point(xy) for xy in zip(with_data['Longitude'], with_data['Latitude'])]
+    gdf = geopandas.GeoDataFrame(with_data, geometry=geometry, crs='EPSG:4326').to_crs('ESRI:102004')
 
     for i, ((col, title, label, kind), bins) in enumerate(zip(panels, bins_per_panel)):
         ax = axes[i]
