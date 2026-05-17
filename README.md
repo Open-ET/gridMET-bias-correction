@@ -95,7 +95,7 @@ gridMET-bias-correction/
 │   ├── Site_Analysis_GridMET/                # Site-level GridMET analysis
 │   ├── Site_Analysis_OpenET/                 # Site-level OpenET analysis
 │   ├── Station_Climate/                      # Climate-grouped station plots
-│   └── station_map_conus_agweather.png       # Station location map
+│   └── Variable_Maps                         # Station location maps for all CONUS-AgWeather variables
 ├── CONUS-AgWeather_v1.zip                    # CONUS-AgWeather compressed archive (~2.3 GB); available from Zenodo
 ├── Data.zip                                  # Compressed data archive (~565 MB); available from Zenodo
 ├── Plots.zip                                 # Compressed plots archive (~0.9 GB); available from Zenodo
