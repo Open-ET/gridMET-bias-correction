@@ -10,6 +10,12 @@ The plots are available from Zenodo:
 
 Download `Plots.zip` and extract its contents into the `Plots/` directory at the repository root.
 
+The `Variable_Maps/` directory ships separately as part of the CONUS-AgWeather release:
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20261765.svg)](https://doi.org/10.5281/zenodo.20261765)
+
+Download `CONUS-AgWeather.zip` from that record; the `Variable_Maps/` folder inside extracts into `Plots/Variable_Maps/`.
+
 ## Directory Structure
 
 ```
@@ -26,6 +32,7 @@ Plots/
 ├── Site_Analysis_GridMET/            # Site-level GridMET analysis (~80 MB)
 ├── Site_Analysis_OpenET/             # Site-level OpenET analysis (~762 MB)
 ├── Station_Climate/                  # Climate-grouped station plots (~18 MB)
+├── Variable_Maps/                    # Per-variable CONUS coverage maps (~121 MB)
 └── station_map_conus_agweather.png   # Station location map (~16 MB)
 ```
 
@@ -47,6 +54,7 @@ Plots/
 | `Site_Analysis_GridMET/` | `scripts/site_analysis_gridmet.py` | Site-level GridMET vs station ET scatter plots with metrics |
 | `Site_Analysis_OpenET/` | `scripts/site_analysis_openet.py` | Site-level OpenET model scatter plots with metrics |
 | `Station_Climate/` | `scripts/station_climate_plots.py` | Station variable distributions by Köppen climate zone |
+| `Variable_Maps/` | `scripts/gen_map.py` | Per-variable CONUS coverage maps (obs count, years, completeness) for every variable in the CONUS-AgWeather standardized data |
 | `station_map_conus_agweather.png` | `scripts/gen_map.py` | CONUS station location map with observation counts |
 
 ---
@@ -226,6 +234,23 @@ Three-panel map of weather station locations across CONUS:
 
 ---
 
+### `Variable_Maps/`
+
+**Script:** `gridmetbias/scripts/gen_map.py`
+
+One three-panel PNG per variable in the CONUS-AgWeather_v1 standardized data, in the same style as `station_map_conus_agweather.png`:
+- (a) Days of valid observations for that variable
+- (b) Years of valid observations
+- (c) Average annual record completeness (%)
+
+**Contents:**
+- `{Variable}_map.png` for each of: ETo, ETr, TMax, TAvg, TMin, Ea, TDew, RHMax, RHAvg, RHMin, Compiled Ea, Rs, Optimized TR Rs, Rso, Measured Uz, Anemometer Height, Uz at 2m, Precipitation
+- `variable_stats.csv` - Cached per-station, per-variable stats used to render the maps
+
+Legends use a shared bin scheme across all variables so the maps are directly comparable. Distributed via the CONUS-AgWeather release on Zenodo: https://doi.org/10.5281/zenodo.20261765
+
+---
+
 ## Quick Reference: Script → Output Mapping
 
 | Script | Output Directories |
@@ -234,7 +259,7 @@ Three-panel map of weather station locations across CONUS:
 | `scripts/boxplots_stats.py` | Boxplots/ |
 | `scripts/conus_agweather_eto_analysis.py` | CONUS-AgWeather_v1_ETo_Stats/ |
 | `scripts/conus_agweather_var_analysis.py` | CONUS-AgWeather_v1_Var_Stats/ |
-| `scripts/gen_map.py` | station_map_conus_agweather.png |
+| `scripts/gen_map.py` | Variable_Maps/ |
 | `scripts/OpenET_flux_grouped_scatter_plots.py` | OpenET_accuracy/ |
 | `scripts/monthly_climos.py` | OpenET_accuracy/ |
 | `scripts/monthly_error_delta_bias_heatmaps.py` | OpenET_accuracy/ |

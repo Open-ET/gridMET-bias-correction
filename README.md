@@ -41,7 +41,7 @@ The full repository requires approximately **11 GB** of disk space. Below is a b
 
 The data required for this project are available from Zenodo:
 
-**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18122157.svg)](https://doi.org/10.5281/zenodo.18122157)
+**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20261765.svg)](https://doi.org/10.5281/zenodo.20261765)
 
 **Input and Output Datasets and Plots for gridMET bias correction**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18673484.svg)](https://doi.org/10.5281/zenodo.18673484)
 
@@ -118,7 +118,7 @@ The `Data/` directory ([available from Zenodo](https://doi.org/10.5281/zenodo.18
 
 | Directory | Description | Status |
 |-----------|-------------|--------|
-| `CONUS-AgWeather_v1/` | QC'd weather station data (~5.7 GB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18122157) |
+| `CONUS-AgWeather_v1/` | QC'd weather station data (~7 GB) | [External - Zenodo](https://doi.org/10.5281/zenodo.20261765) |
 | `supporting_files/` | Climate/CDL parquet files (~320 MB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18673484) |
 | `flux_ET_dataset/` | Flux tower ET observations | [External - Zenodo](https://doi.org/10.5281/zenodo.18673484) |
 | `Outputs/` | Analysis outputs | [External - Zenodo](https://doi.org/10.5281/zenodo.18673484) |
