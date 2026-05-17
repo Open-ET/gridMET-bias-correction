@@ -1,10 +1,20 @@
 """
-Script to generate maps of evapotranspiration observation sites
-This script reads a CSV file containing site information and plots the number of observations, years of data, and average completeness.
+Script to generate maps of weather observation coverage for each variable in
+the CONUS-AgWeather_v1 dataset. For every variable in the standardized data,
+produces a 3-panel figure showing:
+  (a) total days of valid observations,
+  (b) years of valid observations,
+  (c) average annual record completeness (%).
+
+Stats are computed once across all station files and cached to
+``Plots/Variable_Maps/variable_stats.csv`` so re-plotting is fast.
 
 Author: Christian Dunkerly (christian.dunkerly@dri.edu)
 Modified by: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
 """
+
+import os
+from multiprocessing import Pool
 
 import pandas as pd
 import numpy as np
@@ -16,90 +26,164 @@ import matplotlib
 from matplotlib.lines import Line2D
 
 
-if __name__ == "__main__":
-    # Read data first to check actual ranges
-    df = pd.read_csv("../../Data/openet_ground_station_master_list_cleaned_v4.csv")
-    df = df.loc[df['included'] == True]
+# (short_name_for_plot_filename, exact_column_name_in_excel)
+VARIABLES = [
+    ('ETo', 'ETo (mm/day)'),
+    ('ETr', 'ETr (mm/day)'),
+    ('TMax', 'TMax (C)'),
+    ('TAvg', 'TAvg (C)'),
+    ('TMin', 'TMin (C)'),
+    ('Ea', 'Ea (kPa)'),
+    ('TDew', 'TDew (C)'),
+    ('RHMax', 'RHMax (%)'),
+    ('RHAvg', 'RHAvg (%)'),
+    ('RHMin', 'RHMin (%)'),
+    ('Compiled Ea', 'Compiled Ea (kPa)'),
+    ('Rs', 'Rs (w/m2)'),
+    ('Optimized TR Rs', 'Optimized TR Rs (w/m2)'),
+    ('Rso', 'Rso (w/m2)'),
+    ('Measured Uz', 'Measured Uz (m/s)'),
+    ('Anemometer Height', 'Anemometer Height (m)'),
+    ('Uz at 2m', 'Uz at 2m (m/s)'),
+    ('Precipitation', 'Precipitation (mm)'),
+]
 
-    # Check actual data ranges to set appropriate bins
-    print("Actual data ranges:")
-    print(f"etr_obs_count: {df['etr_obs_count'].min():.0f} - {df['etr_obs_count'].max():.0f}")
-    print(f"record_length: {df['record_length'].min():.0f} - {df['record_length'].max():.0f}")
-    print(f"Average Annual Completeness (%): {df['Average Annual Completeness (%)'].min():.1f} - {df['Average Annual Completeness (%)'].max():.1f}")
 
-    # Count how many points are below 3000
-    below_3000 = (df['etr_obs_count'] < 3000).sum()
-    print(f"Points below 3000 observations: {below_3000}")
+def _compute_station_stats(args):
+    """Worker: returns a dict of per-variable stats for one station."""
+    station_filepath, station_id = args
+    try:
+        df = pd.read_excel(station_filepath, sheet_name='Corrected Data')
+    except Exception as exc:
+        print(f'  ! failed to read {station_filepath}: {exc}')
+        return None
 
-    params_dict = {
-        'var_name': {0: 'etr_obs_count',
-                    1: 'record_length',
-                    2: 'Average Annual Completeness (%)'},
-        'legend_title': {0: 'Days of weather observations',
-                        1: 'Years of weather observations',
-                        2: 'Average annual record completeness (%)'},
-        'label': {0: '(a)',
-                1: '(b)',
-                2: '(c)'},
-        'cmap': {0: 'prism_r', 1: 'prism_r', 2: 'prism_r'},
-        # Use actual minimum values to ensure all data is captured
-        'custom_bins': {0: [400, 3000, 6000, 9000, 12000, 15000],  # Start from a round number
-                        1: [1, 5, 10, 15, 20, 25],
-                        2: [40, 70, 80, 90, 95, 100]}
-    }
+    df['Date'] = pd.to_datetime(df['Date'])
+    df['_year'] = df['Date'].dt.year
 
-    print(f"Using bins for observations: {params_dict['custom_bins'][0]}")
+    row = {'Station': station_id}
+    for short, col in VARIABLES:
+        if col not in df.columns:
+            row[f'{short}__obs_count'] = 0
+            row[f'{short}__years'] = 0.0
+            row[f'{short}__completeness'] = 0.0
+            continue
+
+        mask = df[col].notna()
+        obs_count = int(mask.sum())
+        years = obs_count / 365.0  # matches metadata definition (obs / 365)
+
+        if obs_count == 0:
+            completeness = 0.0
+        else:
+            valid_years = df.loc[mask, '_year']
+            min_yr = int(valid_years.min())
+            max_yr = int(valid_years.max())
+            yearly_counts = df.loc[mask].groupby('_year').size()
+            comps = []
+            for yr in range(min_yr, max_yr + 1):
+                days_in_yr = 366 if pd.Timestamp(yr, 1, 1).is_leap_year else 365
+                comps.append(int(yearly_counts.get(yr, 0)) / days_in_yr * 100.0)
+            completeness = float(np.mean(comps))
+
+        row[f'{short}__obs_count'] = obs_count
+        row[f'{short}__years'] = years
+        row[f'{short}__completeness'] = completeness
+
+    return row
+
+
+def build_stats_dataframe(data_dir, n_workers=8):
+    metadata = pd.read_csv(os.path.join(data_dir, 'metadata_for_publication.csv'))
+    standardized_dir = os.path.join(data_dir, 'standardized_data_xlsx')
+
+    tasks = []
+    for _, m in metadata.iterrows():
+        fp = os.path.join(standardized_dir, m['Filename'])
+        if os.path.isfile(fp):
+            tasks.append((fp, m['Station']))
+
+    print(f'Computing variable stats for {len(tasks)} stations using {n_workers} workers...')
+    with Pool(n_workers) as pool:
+        results = pool.map(_compute_station_stats, tasks)
+
+    results = [r for r in results if r is not None]
+    stats_df = pd.DataFrame(results)
+    merged = metadata[['Station', 'Latitude', 'Longitude']].merge(stats_df, on='Station')
+    return merged
+
+
+# Fixed bins shared across all variables so legends are directly comparable.
+# Out-of-range values are clipped into the lowest/highest bin at plot time.
+FIXED_BINS = {
+    'count': [400, 3000, 6000, 9000, 12000, 15000],
+    'years': [1, 5, 10, 15, 20, 25],
+    'completeness': [40, 70, 80, 90, 95, 100],
+}
+
+
+def _compute_bins(kind):
+    return list(FIXED_BINS[kind])
+
+
+def _format_bin_label(start_val, end_val, kind):
+    if kind == 'count':
+        return f'{int(start_val):,} – {int(end_val):,}'
+    return f'{int(round(start_val))} – {int(round(end_val))}'
+
+
+def plot_variable_map(merged, contiguous_states, short_name, full_col, out_dir):
+    """Generate one 3-panel figure for a single variable."""
+    obs_col = f'{short_name}__obs_count'
+    yr_col = f'{short_name}__years'
+    comp_col = f'{short_name}__completeness'
+
+    panels = [
+        (obs_col, 'Days of observations', '(a)', 'count'),
+        (yr_col, 'Years of observations', '(b)', 'years'),
+        (comp_col, 'Average annual record completeness (%)', '(c)', 'completeness'),
+    ]
+
+    if (merged[obs_col] > 0).sum() == 0:
+        print(f'  no stations have data for {short_name}, skipping')
+        return
+
+    bins_per_panel = [_compute_bins(kind) for _, _, _, kind in panels]
+
+    plt.rcParams.update({'font.size': 22})
+    plt.rcParams['font.family'] = 'serif'
+    plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
 
     fig, axes = plt.subplots(3, 1, figsize=(25, 36))
 
-    geometry = [Point(xy) for xy in zip(df['Longitude'], df['Latitude'])]
-    gdf_points = geopandas.GeoDataFrame(df[params_dict['var_name'].values()], geometry=geometry, crs="EPSG:4326")
-    states = geopandas.read_file("../../Data/states/states.shp")
-    contiguous_states = states[~states['STATE_ABBR'].isin(['AK', 'HI'])]
-    contiguous_states = contiguous_states.to_crs("ESRI:102004")
-    gdf_points = gdf_points.to_crs("ESRI:102004")
+    geometry = [Point(xy) for xy in zip(merged['Longitude'], merged['Latitude'])]
+    gdf = geopandas.GeoDataFrame(merged.copy(), geometry=geometry, crs='EPSG:4326').to_crs('ESRI:102004')
 
-    for i in np.arange(3):
+    for i, ((col, title, label, kind), bins) in enumerate(zip(panels, bins_per_panel)):
         ax = axes[i]
-        plt.rcParams.update({'font.size': 22})
-        plt.rcParams['font.family'] = 'serif'
-        plt.rcParams['font.serif'] = ['Times New Roman'] + plt.rcParams['font.serif']
         contiguous_states.plot(ax=ax, color='#e3e3e3', edgecolor='black')
-        
-        # Create discrete colormap with exactly 5 colors
-        base_cmap = matplotlib.colormaps.get_cmap(params_dict['cmap'][i])
-        colors = [base_cmap(j/4) for j in range(5)]  # 5 evenly spaced colors
+
+        if bins is None or (gdf[col] > 0).sum() == 0:
+            ax.set_title(f'{label}  (insufficient data)',
+                         fontdict={'fontsize': '30', 'fontweight': 'bold'})
+            ax.set_aspect('equal')
+            ax.set_xticks([])
+            ax.set_yticks([])
+            for sp in ax.spines.values():
+                sp.set_visible(False)
+            continue
+
+        base_cmap = matplotlib.colormaps.get_cmap('prism_r')
+        colors = [base_cmap(j / 4) for j in range(5)]
         discrete_cmap = mcolors.ListedColormap(colors)
-        
-        # Debug: Print classification for first subplot
-        if i == 0:
-            print(f"\nClassification for subplot {i}:")
-            bins = params_dict['custom_bins'][i]
-            for j in range(len(bins)-1):
-                if j == 0:
-                    # First bin: anything less than the second bin value
-                    count = (gdf_points[params_dict['var_name'][i]] < bins[j+1]).sum()
-                    print(f"Bin < {bins[j+1]:.0f}: {count} points")
-                else:
-                    count = ((gdf_points[params_dict['var_name'][i]] >= bins[j]) & 
-                            (gdf_points[params_dict['var_name'][i]] < bins[j+1])).sum()
-                    if j == len(bins)-2:  # Last bin includes upper bound
-                        count = ((gdf_points[params_dict['var_name'][i]] >= bins[j]) & 
-                                (gdf_points[params_dict['var_name'][i]] <= bins[j+1])).sum()
-                    print(f"Bin {bins[j]:.0f} to {bins[j+1]:.0f}: {count} points")
-        
-        # Create a categorical column for better control over classification
-        data_col = gdf_points[params_dict['var_name'][i]]
-        bins = params_dict['custom_bins'][i]
-        
-        # Create categorical labels
-        categorical = pd.cut(data_col, bins=bins, labels=False, include_lowest=True)
-        gdf_points[f'{params_dict["var_name"][i]}_cat'] = categorical
-        
-        # Plot with categorical data
-        gdf_points.plot(
+
+        data = gdf[col].clip(lower=bins[0], upper=bins[-1])
+        gdf['_cat_'] = pd.cut(data, bins=bins, labels=False, include_lowest=True)
+        plot_gdf = gdf.dropna(subset=['_cat_'])
+
+        plot_gdf.plot(
             ax=ax,
-            column=f'{params_dict["var_name"][i]}_cat',
+            column='_cat_',
             cmap=discrete_cmap,
             marker='o',
             markersize=80,
@@ -107,51 +191,57 @@ if __name__ == "__main__":
             edgecolors='black',
             linewidth=0.5,
             legend=False,
-            categorical=True  # Ensure categorical plotting     
+            categorical=True,
         )
 
-        # Create custom legend with all 5 colors and labels
-        custom_bins = params_dict['custom_bins'][i]
-        new_labels = []
-        new_handles = []
-        num_intervals = len(custom_bins) - 1
-        
-        for idx in range(num_intervals):
-            start_val = int(custom_bins[idx])
-            end_val = int(custom_bins[idx + 1])
-            
-            if i == 0:  # Observation count - use comma notation and special handling for first bin
-                new_text = f'{start_val:,} – {end_val:,}'
-            else:  # Years and completeness - no commas needed for smaller numbers
-                new_text = f'{start_val} – {end_val}'
-            
-            new_labels.append(new_text)
-            # Create a circular marker (dot) with the corresponding color
-            new_handles.append(Line2D([0], [0], marker='o', color='w', 
-                                    markerfacecolor=colors[idx], markersize=15,
-                                    alpha=0.9))
-        
-        # Create a new legend with all 5 entries
-        ax.legend(new_handles, new_labels, 
-                title=params_dict['legend_title'][i],
-                loc="center left",
-                bbox_to_anchor=(0.9, 0.5),
-                fontsize=30,
-                frameon=False,
-                title_fontsize=30)
+        new_handles, new_labels = [], []
+        for idx in range(len(bins) - 1):
+            new_labels.append(_format_bin_label(bins[idx], bins[idx + 1], kind))
+            new_handles.append(Line2D([0], [0], marker='o', color='w',
+                                      markerfacecolor=colors[idx], markersize=15, alpha=0.9))
 
-        # Customize the plot
-        ax.set_title(params_dict['label'][i], fontdict={'fontsize': '30', 'fontweight': 'bold'})
-        # ax.set_xlabel('Longitude', fontsize=30)
-        # ax.set_ylabel('Latitude', fontsize=30)
+        ax.legend(new_handles, new_labels,
+                  title=title,
+                  loc='center left',
+                  bbox_to_anchor=(0.9, 0.5),
+                  fontsize=30,
+                  frameon=False,
+                  title_fontsize=30)
+
+        ax.set_title(label, fontdict={'fontsize': '30', 'fontweight': 'bold'})
         ax.set_aspect('equal')
-        
-        # Remove subplot frames and ticks
         ax.set_xticks([])
         ax.set_yticks([])
-        for spine in ax.spines.values():
-            spine.set_visible(False)
+        for sp in ax.spines.values():
+            sp.set_visible(False)
 
-    # Save the figure
+    fig.suptitle(f'{short_name}  —  {full_col}', fontsize=36, fontweight='bold', y=0.995)
     plt.tight_layout()
-    plt.savefig(f'../../Plots/station_map_conus_agweather.png', dpi=600, bbox_inches='tight', facecolor='white')
+    safe = short_name.replace(' ', '_')
+    fig.savefig(os.path.join(out_dir, f'{safe}_map.png'),
+                dpi=300, bbox_inches='tight', facecolor='white')
+    plt.close(fig)
+
+
+if __name__ == '__main__':
+    data_dir = '../../Data/CONUS-AgWeather_v1'
+    out_dir = '../../Plots/Variable_Maps'
+    os.makedirs(out_dir, exist_ok=True)
+
+    stats_csv = os.path.join(out_dir, 'variable_stats.csv')
+    if os.path.exists(stats_csv):
+        print(f'Loading cached variable stats from {stats_csv}')
+        merged = pd.read_csv(stats_csv)
+    else:
+        merged = build_stats_dataframe(data_dir, n_workers=8)
+        merged.to_csv(stats_csv, index=False)
+        print(f'Cached variable stats to {stats_csv}')
+
+    states = geopandas.read_file('../../Data/states/states.shp')
+    contiguous_states = states[~states['STATE_ABBR'].isin(['AK', 'HI'])].to_crs('ESRI:102004')
+
+    for short, col in VARIABLES:
+        print(f'Plotting {short}...')
+        plot_variable_map(merged, contiguous_states, short, col, out_dir)
+
+    print(f'\nDone. Figures written to {out_dir}')

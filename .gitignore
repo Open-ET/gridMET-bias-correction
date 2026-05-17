@@ -172,4 +172,5 @@ Plots/*
 !Plots/README.md
 Data.zip
 Plots.zip
-CONUS-AgWeather_v1.zip
+CONUS-AgWeather*.zip
+.vscode/
