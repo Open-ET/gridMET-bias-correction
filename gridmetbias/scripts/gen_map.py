@@ -76,15 +76,12 @@ def _compute_station_stats(args):
         if obs_count == 0:
             completeness = 0.0
         else:
-            valid_years = df.loc[mask, '_year']
-            min_yr = int(valid_years.min())
-            max_yr = int(valid_years.max())
-            yearly_counts = df.loc[mask].groupby('_year').size()
-            comps = []
-            for yr in range(min_yr, max_yr + 1):
-                days_in_yr = 366 if pd.Timestamp(yr, 1, 1).is_leap_year else 365
-                comps.append(int(yearly_counts.get(yr, 0)) / days_in_yr * 100.0)
-            completeness = float(np.mean(comps))
+            # Density of valid observations within the station's operating
+            # window (matches the master_list "Average Annual Completeness"
+            # convention used by the original station_map figure).
+            valid_dates = df.loc[mask, 'Date']
+            span_days = (valid_dates.max() - valid_dates.min()).days + 1
+            completeness = obs_count / span_days * 100.0
 
         row[f'{short}__obs_count'] = obs_count
         row[f'{short}__years'] = years
@@ -132,16 +129,16 @@ def _format_bin_label(start_val, end_val, kind):
     return f'{int(round(start_val))} – {int(round(end_val))}'
 
 
-def plot_variable_map(merged, contiguous_states, short_name, full_col, out_dir):
+def plot_variable_map(merged, contiguous_states, short_name, out_dir):
     """Generate one 3-panel figure for a single variable."""
     obs_col = f'{short_name}__obs_count'
     yr_col = f'{short_name}__years'
     comp_col = f'{short_name}__completeness'
 
     panels = [
-        (obs_col, 'Days of observations', '(a)', 'count'),
-        (yr_col, 'Years of observations', '(b)', 'years'),
-        (comp_col, 'Average annual record completeness (%)', '(c)', 'completeness'),
+        (obs_col, f'Days of {short_name} observations', '(a)', 'count'),
+        (yr_col, f'Years of {short_name} observations', '(b)', 'years'),
+        (comp_col, f'Average annual {short_name} record completeness (%)', '(c)', 'completeness'),
     ]
 
     if (merged[obs_col] > 0).sum() == 0:
@@ -215,7 +212,6 @@ def plot_variable_map(merged, contiguous_states, short_name, full_col, out_dir):
         for sp in ax.spines.values():
             sp.set_visible(False)
 
-    fig.suptitle(f'{short_name}  —  {full_col}', fontsize=36, fontweight='bold', y=0.995)
     plt.tight_layout()
     safe = short_name.replace(' ', '_')
     fig.savefig(os.path.join(out_dir, f'{safe}_map.png'),
@@ -240,8 +236,8 @@ if __name__ == '__main__':
     states = geopandas.read_file('../../Data/states/states.shp')
     contiguous_states = states[~states['STATE_ABBR'].isin(['AK', 'HI'])].to_crs('ESRI:102004')
 
-    for short, col in VARIABLES:
+    for short, _ in VARIABLES:
         print(f'Plotting {short}...')
-        plot_variable_map(merged, contiguous_states, short, col, out_dir)
+        plot_variable_map(merged, contiguous_states, short, out_dir)
 
     print(f'\nDone. Figures written to {out_dir}')

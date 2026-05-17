@@ -14,7 +14,7 @@ The `Variable_Maps/` directory ships separately as part of the CONUS-AgWeather r
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20261765.svg)](https://doi.org/10.5281/zenodo.20261765)
 
-Download `CONUS-AgWeather.zip` from that record; the `Variable_Maps/` folder inside extracts into `Plots/Variable_Maps/`.
+Download `CONUS-AgWeather_v1.zip` from that record; the `Variable_Maps/` folder inside extracts into `Plots/Variable_Maps/`.
 
 ## Directory Structure
 

@@ -13,7 +13,7 @@ Steps:
         "Delta (Corr - Orig)" -> _delta.parquet
      Any stale ``*_filled.parquet`` files are removed first.
   3. Zip the entire ``CONUS-AgWeather_v1`` directory (xlsx + parquet + metadata)
-     together with ``Plots/Variable_Maps`` into ``CONUS-AgWeather.zip`` at the
+     together with ``Plots/Variable_Maps`` into ``CONUS-AgWeather_v1.zip`` at the
      repo root. ``.DS_Store`` files are excluded.
 
 Author: Dr. Sayantan Majumdar (sayantan.majumdar@dri.edu)
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     data_root = os.path.join(repo_root, 'Data', 'CONUS-AgWeather_v1')
     xlsx_dir = os.path.join(data_root, 'standardized_data_xlsx')
     parquet_dir = os.path.join(data_root, 'standardized_data_parquet')
-    zip_path = os.path.join(repo_root, 'CONUS-AgWeather.zip')
+    zip_path = os.path.join(repo_root, 'CONUS-AgWeather_v1.zip')
 
     variable_maps_dir = os.path.join(repo_root, 'Plots', 'Variable_Maps')
 
