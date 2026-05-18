@@ -36,7 +36,7 @@ The data required for this project are available from Zenodo:
 
 **CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18122157.svg)](https://doi.org/10.5281/zenodo.18122157)
 
-**Input and Output Datasets and Plots for gridMET bias correction**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18807224.svg)](https://doi.org/10.5281/zenodo.18807224)
+**Input and Output Datasets and Plots for gridMET bias correction**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18673483.svg)](https://doi.org/10.5281/zenodo.18673483)
 
 Download the data archive and extract its contents into the `Data/` directory. The CONUS-AgWeather_v1 zip archive from Zenodo must also be extracted within `Data/` so that the `CONUS-AgWeather_v1/` directory resides at `Data/CONUS-AgWeather_v1/`.
 
@@ -289,15 +289,15 @@ Data directories are available from Zenodo. CONUS-AgWeather_v1 has its own DOI; 
 | Directory | Size | Source |
 |-----------|------|--------|
 | `CONUS-AgWeather_v1/` | ~5.7 GB | [Zenodo](https://doi.org/10.5281/zenodo.18122157) |
-| `supporting_files/` | ~320 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `flux_ET_dataset/` | ~204 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Outputs/` | ~173 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `paired_flux_OpenET_data/` | ~436 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `states/` | ~42 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `flux_data/` | ~25 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Point_bias_data/` | ~18 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `flux_gridmet/` | ~12 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `climateClass_poly_diss/` | ~8 MB | [Zenodo](https://doi.org/10.5281/zenodo.18807224) |
+| `supporting_files/` | ~320 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `flux_ET_dataset/` | ~204 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Outputs/` | ~173 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `paired_flux_OpenET_data/` | ~436 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `states/` | ~42 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `flux_data/` | ~25 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Point_bias_data/` | ~18 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `flux_gridmet/` | ~12 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `climateClass_poly_diss/` | ~8 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
 
 ---
 
@@ -338,6 +338,6 @@ Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pears
 
 **Data Releases:**
 
-Volk, J., Dunkerly, C., Majumdar, S., Huntington, J., Minor, B., Kim, Y., Morton, C., ReVelle, P., Kilic, A., Melton, F., Allen, R., Pearson, C., Purdy, A., & Caldwell, T. (2026). CONUS Gridded Reference Evapotranspiration Bias Correction: Inputs, Station Validation, and Outputs (gridMET/OpenET) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18807224
+Volk, J., Dunkerly, C., Majumdar, S., Huntington, J., Minor, B., Kim, Y., Morton, C., ReVelle, P., Kilic, A., Melton, F., Allen, R., Pearson, C., Purdy, A., & Caldwell, T. (2026). CONUS Gridded Reference Evapotranspiration Bias Correction: Inputs, Station Validation, and Outputs (gridMET/OpenET) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18673483
 
-Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States (1.0.0) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122157
+Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122157.

@@ -21,17 +21,17 @@ Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pears
 
 **Data Releases:**
 
-Volk, J., Dunkerly, C., Majumdar, S., Huntington, J., Minor, B., Kim, Y., Morton, C., ReVelle, P., Kilic, A., Melton, F., Allen, R., Pearson, C., Purdy, A., & Caldwell, T. (2026). CONUS Gridded Reference Evapotranspiration Bias Correction: Inputs, Station Validation, and Outputs (gridMET/OpenET) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18807224
+Volk, J., Dunkerly, C., Majumdar, S., Huntington, J., Minor, B., Kim, Y., Morton, C., ReVelle, P., Kilic, A., Melton, F., Allen, R., Pearson, C., Purdy, A., & Caldwell, T. (2026). CONUS Gridded Reference Evapotranspiration Bias Correction: Inputs, Station Validation, and Outputs (gridMET/OpenET) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18673483
 
-Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States (1.0.1) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.20261765.
+Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122157.
 
 ## Disk Space Requirements
 
-The full repository requires approximately **11 GB** of disk space. Below is a breakdown by directory:
+The full repository requires approximately **12 GB** of disk space. Below is a breakdown by directory:
 
 | Directory | Size | Description |
 |-----------|------|-------------|
-| `Data/` | ~6.9 GB | Input datasets and analysis outputs (including CONUS-AgWeather)|
+| `Data/` | ~8 GB | Input datasets and analysis outputs (including CONUS-AgWeather)|
 | `Data.zip` | ~565 MB | Compressed data archive (available from Zenodo) |
 | `Plots.zip` | ~849 MB | Compressed plots archive (available from Zenodo) |
 | `Plots/` | ~1.0 GB | Generated visualizations (see below) (unzipped Plots.zip) |
@@ -41,9 +41,9 @@ The full repository requires approximately **11 GB** of disk space. Below is a b
 
 The data required for this project are available from Zenodo:
 
-**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20261765.svg)](https://doi.org/10.5281/zenodo.20261765)
+**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18122157.svg)](https://doi.org/10.5281/zenodo.18122157)
 
-**Input and Output Datasets and Plots for gridMET bias correction**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18807224.svg)](https://doi.org/10.5281/zenodo.18807224)
+**Input and Output Datasets and Plots for gridMET bias correction**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18673483.svg)](https://doi.org/10.5281/zenodo.18673483)
 
 Download the data archive and extract its contents into the `Data/` directory. The CONUS-AgWeather_v1 zip archive from Zenodo must also be extracted within `Data/` so that the `CONUS-AgWeather_v1/` directory resides at `Data/CONUS-AgWeather_v1/`. See [Data/README.md](Data/README.md) for detailed instructions on data organization and file descriptions.
 
@@ -114,21 +114,21 @@ Detailed documentation is available in each module:
 
 ### Data Directory Summary
 
-The `Data/` directory ([available from Zenodo](https://doi.org/10.5281/zenodo.18807224)) contains input datasets and analysis outputs. Key contents:
+The `Data/` directory ([available from Zenodo](https://doi.org/10.5281/zenodo.18673483)) contains input datasets and analysis outputs. Key contents:
 
 | Directory | Description | Status |
 |-----------|-------------|--------|
-| `CONUS-AgWeather_v1/` | QC'd weather station data (~7 GB) | [External - Zenodo](https://doi.org/10.5281/zenodo.20261765) |
-| `supporting_files/` | Climate/CDL parquet files (~320 MB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `flux_ET_dataset/` | Flux tower ET observations | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Outputs/` | Analysis outputs | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `paired_flux_OpenET_data/` | Merged flux and OpenET data | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `states/` | US state boundaries | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `flux_data/` | GridMET reference ET data | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Point_bias_data/` | Station-level bias ratio summaries | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `flux_gridmet/` | Paired flux-gridMET data | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `metadata/` | Station metadata | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `climateClass_poly_diss/` | Köppen climate zone shapefiles | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
+| `CONUS-AgWeather_v1/` | QC'd weather station data (~7 GB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18122157) |
+| `supporting_files/` | Climate/CDL parquet files (~320 MB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `flux_ET_dataset/` | Flux tower ET observations | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Outputs/` | Analysis outputs | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `paired_flux_OpenET_data/` | Merged flux and OpenET data | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `states/` | US state boundaries | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `flux_data/` | GridMET reference ET data | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Point_bias_data/` | Station-level bias ratio summaries | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `flux_gridmet/` | Paired flux-gridMET data | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `metadata/` | Station metadata | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `climateClass_poly_diss/` | Köppen climate zone shapefiles | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
 
 See [Data/README.md](Data/README.md) for complete file descriptions and script requirements.
 
@@ -138,18 +138,18 @@ The `Plots/` directory (~1.0 GB) contains all generated visualizations. These ar
 
 | Directory | Size | Generating Script | Description | Status |
 |-----------|------|--------------------|-------------|--------|
-| `Site_Analysis_OpenET/` | ~762 MB | `site_analysis_openet.py` | Site-level OpenET analysis | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `GridMET_Plots/` | ~124 MB | `corr_analysis_gridmet.py` | GridMET validation plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Site_Analysis_GridMET/` | ~80 MB | `site_analysis_gridmet.py` | Site-level GridMET analysis | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Climate/` | ~21 MB | `corr_analysis_gridmet.py` | Climate-stratified correlations | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Station_Climate/` | ~18 MB | `station_climate_plots.py` | Climate-grouped distributions | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Crop_Bias_Distributions/` | ~10 MB | `corr_analysis_gridmet.py` | Crop type bias distributions | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `CONUS-AgWeather_v1_Var_Stats/` | ~9.3 MB | `conus_agweather_var_analysis.py` | Variable QC analysis plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `East_vs_West/` | ~8.4 MB | `corr_analysis_gridmet.py` | Regional comparisons | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Correlation_Plots_All/` | ~2.7 MB | `corr_analysis_gridmet.py` | Correlation analysis plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `Boxplots/` | ~2.6 MB | `boxplots_stats.py` | Bias boxplots by region/climate | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `CONUS-AgWeather_v1_ETo_Stats/` | ~2.2 MB | `conus_agweather_eto_analysis.py` | ETo QC analysis plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
-| `OpenET_accuracy/` | ~1.3 MB | `OpenET_flux_grouped_scatter_plots.py`, `monthly_climos.py`, `monthly_error_delta_bias_heatmaps.py`, `monthly_ET_vs_ETo_error_scatter.py` | OpenET vs flux accuracy plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18807224) |
+| `Site_Analysis_OpenET/` | ~762 MB | `site_analysis_openet.py` | Site-level OpenET analysis | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `GridMET_Plots/` | ~124 MB | `corr_analysis_gridmet.py` | GridMET validation plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Site_Analysis_GridMET/` | ~80 MB | `site_analysis_gridmet.py` | Site-level GridMET analysis | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Climate/` | ~21 MB | `corr_analysis_gridmet.py` | Climate-stratified correlations | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Station_Climate/` | ~18 MB | `station_climate_plots.py` | Climate-grouped distributions | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Crop_Bias_Distributions/` | ~10 MB | `corr_analysis_gridmet.py` | Crop type bias distributions | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `CONUS-AgWeather_v1_Var_Stats/` | ~9.3 MB | `conus_agweather_var_analysis.py` | Variable QC analysis plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `East_vs_West/` | ~8.4 MB | `corr_analysis_gridmet.py` | Regional comparisons | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Correlation_Plots_All/` | ~2.7 MB | `corr_analysis_gridmet.py` | Correlation analysis plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `Boxplots/` | ~2.6 MB | `boxplots_stats.py` | Bias boxplots by region/climate | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `CONUS-AgWeather_v1_ETo_Stats/` | ~2.2 MB | `conus_agweather_eto_analysis.py` | ETo QC analysis plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
+| `OpenET_accuracy/` | ~1.3 MB | `OpenET_flux_grouped_scatter_plots.py`, `monthly_climos.py`, `monthly_error_delta_bias_heatmaps.py`, `monthly_ET_vs_ETo_error_scatter.py` | OpenET vs flux accuracy plots | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
 
 ## Installation
 
