@@ -57,25 +57,26 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 ---
 
 ### 3. `gen_map.py`
-**Purpose:** Generates maps of evapotranspiration observation sites showing number of observations, years of data, and average completeness.
+**Purpose:** Generates per-variable CONUS coverage maps for every variable in the CONUS-AgWeather standardized data. For each variable, produces a three-panel figure showing days of observations, years of observations, and average annual record completeness (%) at each station. Per-station, per-variable stats are computed once and cached to `variable_stats.csv` so re-plotting is fast.
 
 **Authors:** Christian Dunkerly, Dr. Sayantan Majumdar
 
 **Input Data Files:**
 | File | Path |
 |------|------|
-| Station master list | `../../Data/openet_ground_station_master_list_cleaned_v4.csv` |
+| Station metadata | `../../Data/CONUS-AgWeather_v1/metadata_for_publication.csv` |
+| Per-station data (Parquet) | `../../Data/CONUS-AgWeather_v1/standardized_data_parquet/*_corrected.parquet` |
 | States shapefile | `../../Data/states/states.shp` |
 
 **Output Files:**
 | File | Path |
 |------|------|
-| Station map | `../../Plots/station_map_conus_agweather.png` |
+| Per-variable maps (×18) | `../../Plots/Variable_Maps/{Variable}_map.png` |
+| Cached stats | `../../Plots/Variable_Maps/variable_stats.csv` |
 
-**Map Variables:**
-- Days of weather observations
-- Years of weather observations
-- Average annual record completeness (%)
+**Map Variables:** ETo, ETr, TMax, TAvg, TMin, Ea, TDew, RHMax, RHAvg, RHMin, Compiled Ea, Rs, Optimized TR Rs, Rso, Measured Uz, Anemometer Height, Uz at 2m, Precipitation
+
+**Completeness convention:** Per-year ratio = (valid days for this variable in year `y`) / (days the station was active in year `y`), averaged across all calendar years in the station's record. Matches the original `station_map` figure's definition.
 
 ---
 
@@ -87,7 +88,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 **Input Data Files:**
 | File | Path |
 |------|------|
-| Station Excel files | `../../Data/CONUS-AgWeather_v1/standardized_data/*.xlsx` |
+| Station Excel files | `../../Data/CONUS-AgWeather_v1/standardized_data_xlsx/*.xlsx` |
 | Climate parquet | `../../Data/supporting_files/Station_Climate/station_climate_data.parquet` |
 
 **Output Files:**
@@ -108,7 +109,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 **Input Data Files:**
 | File | Path |
 |------|------|
-| Station Excel files | `../../Data/CONUS-AgWeather_v1/standardized_data/*.xlsx` |
+| Station Excel files | `../../Data/CONUS-AgWeather_v1/standardized_data_xlsx/*.xlsx` |
 
 **Output Files:**
 | File | Path |
@@ -219,7 +220,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 | File | Path |
 |------|------|
 | Station metadata | CSV file with station information |
-| Station Excel files | `../../Data/CONUS-AgWeather_v1/standardized_data/*.xlsx` |
+| Station Excel files | `../../Data/CONUS-AgWeather_v1/standardized_data_xlsx/*.xlsx` |
 | Climate classification | Climate CSV with station IDs and Köppen codes |
 
 **Output Files:**
@@ -306,6 +307,27 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 
 ---
 
+### 14. `convert_to_parquet.py`
+**Purpose:** Packages the CONUS-AgWeather_v1 dataset for distribution. Strips the empty "Filled Data" sheet from every station xlsx file (verified all-NaN across the dataset), converts each remaining sheet to Parquet for fast loading, then builds the distributable `CONUS-AgWeather_v1.zip` archive (xlsx + parquet + QC plots + metadata + Variable_Maps), excluding `.DS_Store` files. Uses multiprocessing for the xlsx and Parquet steps.
+
+**Author:** Dr. Sayantan Majumdar
+
+**Input Data Files:**
+| File | Path |
+|------|------|
+| Station Excel files | `../../Data/CONUS-AgWeather_v1/standardized_data_xlsx/*.xlsx` |
+| Variable maps | `../../Plots/Variable_Maps/` |
+
+**Output Files:**
+| File | Path |
+|------|------|
+| Per-sheet Parquet files | `../../Data/CONUS-AgWeather_v1/standardized_data_parquet/{base}_corrected.parquet`, `{base}_delta.parquet` |
+| Distributable archive | `../../CONUS-AgWeather_v1.zip` |
+
+**Notes:** Idempotent — re-running detects xlsx files already stripped and removes stale `*_filled.parquet` files automatically. Run this whenever the Variable_Maps are regenerated to refresh the zip.
+
+---
+
 
 ## Data Dependencies
 
@@ -313,7 +335,7 @@ This directory contains Python scripts for analyzing gridMET reference evapotran
 ```
 Data/
 ├── CONUS-AgWeather_v1/
-│   └── standardized_data/          # Station Excel files
+│   └── standardized_data_xlsx/          # Station Excel files
 ├── Point_bias_data/
 │   └── Climate/                    # Climate-merged bias data
 ├── flux_gridmet/                   # Paired flux-gridMET monthly/daily data
@@ -400,4 +422,4 @@ Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pears
 
 Volk, J., Dunkerly, C., Majumdar, S., Huntington, J., Minor, B., Kim, Y., Morton, C., ReVelle, P., Kilic, A., Melton, F., Allen, R., Pearson, C., Purdy, A., & Caldwell, T. (2026). CONUS Gridded Reference Evapotranspiration Bias Correction: Inputs, Station Validation, and Outputs (gridMET/OpenET) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18673483
 
-Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122157.
+Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122156.

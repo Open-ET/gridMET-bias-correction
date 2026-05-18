@@ -11,7 +11,8 @@ Data/
 ├── climateClass_poly_diss/                   # Climate classification shapefiles
 ├── CONUS-AgWeather_v1/                       # CONUS-AgWeather dataset
 │   ├── metadata_for_publication.csv
-│   ├── standardized_data/                    # Station Excel files with QC data
+│   ├── standardized_data_xlsx/               # Station Excel files (Corrected + Delta)
+│   ├── standardized_data_parquet/            # Same daily data in Parquet
 │   ├── after_qc_composite_graphs/            # Composite graphs after QC
 │   ├── before_qc_composite_graphs/           # Composite graphs before QC
 │   ├── log_files/                            # QC processing logs
@@ -34,7 +35,7 @@ Data/
 
 The data required for this project are available from Zenodo:
 
-**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18122157.svg)](https://doi.org/10.5281/zenodo.18122157)
+**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18122156.svg)](https://doi.org/10.5281/zenodo.18122156)
 
 **Input and Output Datasets and Plots for gridMET bias correction**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18673483.svg)](https://doi.org/10.5281/zenodo.18673483)
 
@@ -74,21 +75,22 @@ Download the data archive and extract its contents into the `Data/` directory. T
 
 | Data File | Path | Description |
 |-----------|------|-------------|
-| Station master list | `openet_ground_station_master_list_cleaned_v4.csv` | Station locations and metadata |
+| Station metadata | `CONUS-AgWeather_v1/metadata_for_publication.csv` | Station IDs, names, lat/lon, networks |
+| Per-station data | `CONUS-AgWeather_v1/standardized_data_parquet/*_corrected.parquet` | Daily weather observations per station |
 | States shapefile | `states/states.shp` | US state boundaries |
 
 ### Script: `conus_agweather_eto_analysis.py`
 
 | Data File | Path | Description |
 |-----------|------|-------------|
-| Station Excel files | `CONUS-AgWeather_v1/standardized_data/*.xlsx` | Standardized station data with QC |
+| Station Excel files | `CONUS-AgWeather_v1/standardized_data_xlsx/*.xlsx` | Standardized station data with QC |
 | Climate parquet | `supporting_files/Station_Climate/station_climate_data.parquet` | Station climate classifications |
 
 ### Script: `conus_agweather_var_analysis.py`
 
 | Data File | Path | Description |
 |-----------|------|-------------|
-| Station Excel files | `CONUS-AgWeather_v1/standardized_data/*.xlsx` | Standardized station data |
+| Station Excel files | `CONUS-AgWeather_v1/standardized_data_xlsx/*.xlsx` | Standardized station data |
 
 ### Script: `OpenET_flux_grouped_scatter_plots.py`
 
@@ -111,7 +113,7 @@ Download the data archive and extract its contents into the `Data/` directory. T
 | Data File | Path | Description |
 |-----------|------|-------------|
 | Station metadata | CSV with station information | Station IDs and coordinates |
-| Station Excel files | `CONUS-AgWeather_v1/standardized_data/*.xlsx` | Station observations |
+| Station Excel files | `CONUS-AgWeather_v1/standardized_data_xlsx/*.xlsx` | Station observations |
 | Climate classification | `Point_bias_data/Climate/*_merged_with_climate.csv` | Station climate zones |
 
 ### Script: `monthly_climos.py`
@@ -159,16 +161,17 @@ Köppen-Geiger climate classification shapefile for the contiguous United States
 
 ### `CONUS-AgWeather_v1/`
 
-CONUS-AgWeather dataset containing quality-controlled agricultural weather station data (~5.7 GB). Available from [Zenodo](https://doi.org/10.5281/zenodo.18122157).
+CONUS-AgWeather dataset containing quality-controlled agricultural weather station data (~6.3 GB). Available from [Zenodo](https://doi.org/10.5281/zenodo.18122156).
 
 | Subdirectory/File | Description | Size |
 |-------------------|-------------|------|
-| `standardized_data/` | Excel files with corrected data, original data, and delta (correction) values | ~1.2 GB |
+| `standardized_data_xlsx/` | Excel files with corrected data and delta (correction) values | ~1.2 GB |
+| `standardized_data_parquet/` | Same daily data as Parquet for fast loading (corrected + delta per station) | ~606 MB |
 | `variable_qc_graphs/` | Variable-specific QC visualizations | ~2.1 GB |
 | `after_qc_composite_graphs/` | Composite graphs after QC | ~1.2 GB |
 | `before_qc_composite_graphs/` | Composite graphs before QC | ~1.2 GB |
 | `log_files/` | QC processing logs | ~3.1 MB |
-| `metadata_for_publication.csv` | Station metadata for publication | — |
+| `metadata_for_publication.csv` | Station metadata for publication | ~148 KB |
 
 **Excel file sheets:**
 - `Corrected Data` - QC-corrected observations
@@ -288,7 +291,7 @@ Data directories are available from Zenodo. CONUS-AgWeather_v1 has its own DOI; 
 
 | Directory | Size | Source |
 |-----------|------|--------|
-| `CONUS-AgWeather_v1/` | ~5.7 GB | [Zenodo](https://doi.org/10.5281/zenodo.18122157) |
+| `CONUS-AgWeather_v1/` | ~6.3 GB | [Zenodo](https://doi.org/10.5281/zenodo.18122156) |
 | `supporting_files/` | ~320 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
 | `flux_ET_dataset/` | ~204 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
 | `Outputs/` | ~173 MB | [Zenodo](https://doi.org/10.5281/zenodo.18673483) |
@@ -340,4 +343,4 @@ Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pears
 
 Volk, J., Dunkerly, C., Majumdar, S., Huntington, J., Minor, B., Kim, Y., Morton, C., ReVelle, P., Kilic, A., Melton, F., Allen, R., Pearson, C., Purdy, A., & Caldwell, T. (2026). CONUS Gridded Reference Evapotranspiration Bias Correction: Inputs, Station Validation, and Outputs (gridMET/OpenET) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18673483
 
-Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122157.
+Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122156.

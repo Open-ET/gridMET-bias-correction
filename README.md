@@ -23,25 +23,26 @@ Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pears
 
 Volk, J., Dunkerly, C., Majumdar, S., Huntington, J., Minor, B., Kim, Y., Morton, C., ReVelle, P., Kilic, A., Melton, F., Allen, R., Pearson, C., Purdy, A., & Caldwell, T. (2026). CONUS Gridded Reference Evapotranspiration Bias Correction: Inputs, Station Validation, and Outputs (gridMET/OpenET) [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18673483
 
-Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122157.
+Dunkerly, C., Volk, J. M., Majumdar, S., Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). CONUS-AgWeather, a high-quality benchmark daily agricultural weather station dataset for evapotranspiration applications in the Contiguous United States [Data set]. _Zenodo_. https://doi.org/10.5281/zenodo.18122156.
 
 ## Disk Space Requirements
 
-The full repository requires approximately **12 GB** of disk space. Below is a breakdown by directory:
+The full repository requires approximately **13 GB** of disk space. Below is a breakdown by directory:
 
 | Directory | Size | Description |
 |-----------|------|-------------|
-| `Data/` | ~8 GB | Input datasets and analysis outputs (including CONUS-AgWeather)|
+| `Data/` | ~7.5 GB | Input datasets and analysis outputs (including CONUS-AgWeather) |
 | `Data.zip` | ~565 MB | Compressed data archive (available from Zenodo) |
-| `Plots.zip` | ~849 MB | Compressed plots archive (available from Zenodo) |
-| `Plots/` | ~1.0 GB | Generated visualizations (see below) (unzipped Plots.zip) |
-| `gridmetbias/` | ~472 KB | Python source code |
+| `Plots/` | ~1.1 GB | Generated visualizations (see below) (unzipped Plots.zip) |
+| `Plots.zip` | ~844 MB | Compressed plots archive (available from Zenodo) |
+| `CONUS-AgWeather_v1.zip` | ~2.8 GB | CONUS-AgWeather release bundle (xlsx + parquet + QC plots + Variable_Maps) |
+| `gridmetbias/` | ~500 KB | Python source code |
 
 ## Data Availability
 
 The data required for this project are available from Zenodo:
 
-**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18122157.svg)](https://doi.org/10.5281/zenodo.18122157)
+**CONUS-AgWeather_v1**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18122156.svg)](https://doi.org/10.5281/zenodo.18122156)
 
 **Input and Output Datasets and Plots for gridMET bias correction**: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18673483.svg)](https://doi.org/10.5281/zenodo.18673483)
 
@@ -63,9 +64,10 @@ gridMET-bias-correction/
 │   ├── koppen_ID_info.csv
 │   ├── openet_ground_station_master_list_cleaned_v4.csv
 │   ├── climateClass_poly_diss/               # Climate classification shapefiles
-│   ├── CONUS-AgWeather_v1/                   # QC'd weather station data (~5.7 GB)
+│   ├── CONUS-AgWeather_v1/                   # QC'd weather station data (~6.3 GB)
 │   │   ├── metadata_for_publication.csv
-│   │   ├── standardized_data/                # Station Excel files with QC data
+│   │   ├── standardized_data_xlsx/           # Station Excel files (Corrected + Delta)
+│   │   ├── standardized_data_parquet/        # Same daily data in Parquet
 │   │   ├── after_qc_composite_graphs/        # Composite graphs after QC
 │   │   ├── before_qc_composite_graphs/       # Composite graphs before QC
 │   │   ├── log_files/                        # QC processing logs
@@ -82,7 +84,7 @@ gridMET-bias-correction/
 │   ├── Point_bias_data/                      # Point-level bias data
 │   ├── states/                               # US state boundary shapefiles
 │   └── supporting_files/                     # Climate/CDL parquet files
-├── Plots/                                    # Generated visualizations (~1.0 GB); available from Zenodo
+├── Plots/                                    # Generated visualizations (~1.1 GB); available from Zenodo
 │   ├── Boxplots/                             # Bias boxplots by region/climate
 │   ├── Climate/                              # Climate-stratified correlations
 │   ├── CONUS-AgWeather_v1_ETo_Stats/         # ETo QC analysis plots
@@ -95,7 +97,7 @@ gridMET-bias-correction/
 │   ├── Site_Analysis_GridMET/                # Site-level GridMET analysis
 │   ├── Site_Analysis_OpenET/                 # Site-level OpenET analysis
 │   ├── Station_Climate/                      # Climate-grouped station plots
-│   └── Variable_Maps                         # Station location maps for all CONUS-AgWeather variables
+│   └── Variable_Maps/                        # Per-variable CONUS coverage maps
 ├── CONUS-AgWeather_v1.zip                    # CONUS-AgWeather compressed archive (~3 GB); available from Zenodo
 ├── Data.zip                                  # Compressed data archive (~565 MB); available from Zenodo
 ├── Plots.zip                                 # Compressed plots archive (~0.9 GB); available from Zenodo
@@ -118,7 +120,7 @@ The `Data/` directory ([available from Zenodo](https://doi.org/10.5281/zenodo.18
 
 | Directory | Description | Status |
 |-----------|-------------|--------|
-| `CONUS-AgWeather_v1/` | QC'd weather station data (~7 GB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18122157) |
+| `CONUS-AgWeather_v1/` | QC'd weather station data (~7 GB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18122156) |
 | `supporting_files/` | Climate/CDL parquet files (~320 MB) | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
 | `flux_ET_dataset/` | Flux tower ET observations | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
 | `Outputs/` | Analysis outputs | [External - Zenodo](https://doi.org/10.5281/zenodo.18673483) |
@@ -209,9 +211,10 @@ The `scripts/` directory contains specialized analysis tools. See [gridmetbias/s
 |--------|-------------|
 | `data_formatting.py` | Merge bias data with Köppen climate zones |
 | `boxplots_stats.py` | Generate bias boxplots with summary statistics |
-| `gen_map.py` | Create station location maps |
+| `gen_map.py` | Per-variable CONUS coverage maps for the CONUS-AgWeather data |
 | `conus_agweather_eto_analysis.py` | CONUS-AgWeather ETo QC analysis |
 | `conus_agweather_var_analysis.py` | CONUS-AgWeather variable (Rs, Rso) analysis |
+| `convert_to_parquet.py` | Strip empty sheets from xlsx, convert to Parquet, build the CONUS-AgWeather release zip |
 | `site_analysis_gridmet.py` | Site-level gridMET validation |
 | `site_analysis_openet.py` | Site-level OpenET validation |
 | `site_analysis_gridmet_openet.py` | Merge gridMET and OpenET datasets |
