@@ -127,12 +127,31 @@ def build_stats_dataframe(data_dir, n_workers=8):
 FIXED_BINS = {
     'count': [400, 3000, 6000, 9000, 12000, 15000],
     'years': [1, 5, 10, 15, 20, 25],
-    'completeness': [40, 70, 80, 90, 95, 100],
+    # First edge is replaced at runtime with the global completeness minimum
+    # observed across all variables, so the lowest bin honestly reflects the
+    # data floor rather than implying values can reach 0%.
+    'completeness': [None, 40, 70, 80, 90, 95, 100],
 }
 
 
 def _compute_bins(kind):
     return list(FIXED_BINS[kind])
+
+
+def _set_completeness_floor(merged):
+    """Set the lowest completeness bin edge to the global minimum across all
+    variables, considering only stations that actually have data for that
+    variable. Floored to the nearest integer for a clean legend label."""
+    comp_cols = [f'{short}__completeness' for short, _ in VARIABLES]
+    obs_cols = [f'{short}__obs_count' for short, _ in VARIABLES]
+    mins = []
+    for comp_col, obs_col in zip(comp_cols, obs_cols):
+        if comp_col in merged.columns and obs_col in merged.columns:
+            sub = merged.loc[merged[obs_col] > 0, comp_col]
+            if len(sub):
+                mins.append(sub.min())
+    if mins:
+        FIXED_BINS['completeness'][0] = int(np.floor(min(mins)))
 
 
 def _format_bin_label(start_val, end_val, kind):
@@ -187,8 +206,16 @@ def plot_variable_map(merged, contiguous_states, short_name, out_dir):
                 sp.set_visible(False)
             continue
 
+        # Keep the original 5-color prism_r ramp for the meaningful range
+        # (>= 40% for completeness, full range for count/years). For
+        # completeness, prepend black so the sub-40% outlier bin stands out
+        # rather than blending with a similar prism_r hue.
         base_cmap = matplotlib.colormaps.get_cmap('prism_r')
-        colors = [base_cmap(j / 4) for j in range(5)]
+        ramp_colors = [base_cmap(j / 4) for j in range(5)]
+        if kind == 'completeness':
+            colors = [(0.0, 0.0, 0.0, 1.0)] + ramp_colors
+        else:
+            colors = ramp_colors
         discrete_cmap = mcolors.ListedColormap(colors)
 
         data = gdf[col].clip(lower=bins[0], upper=bins[-1])
@@ -249,6 +276,9 @@ if __name__ == '__main__':
         merged = build_stats_dataframe(data_dir, n_workers=8)
         merged.to_csv(stats_csv, index=False)
         print(f'Cached variable stats to {stats_csv}')
+
+    _set_completeness_floor(merged)
+    print(f"Completeness bin edges: {FIXED_BINS['completeness']}")
 
     states = geopandas.read_file('../../Data/states/states.shp')
     contiguous_states = states[~states['STATE_ABBR'].isin(['AK', 'HI'])].to_crs('ESRI:102004')
