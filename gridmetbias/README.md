@@ -178,7 +178,7 @@ See [LICENSE](../LICENSE) for details.
 Volk, J. M., Dunkerly, C., Majumdar, S., Huntington, J. L., Minor, B. A., Kim, Y., Morton, C. G., ReVelle, P., Kilic, A., Melton, F., Allen, R. G., Pearson, C., Purdy, A. J., & Caldwell, T. G. (2026). 
 Assessing and Correcting Bias in Gridded Reference Evapotranspiration over Agricultural Lands Across the Contiguous United States. _Under review in Agricultural Water Management_. Preprint: https://doi.org/10.31223/X54F38
 
-Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). A Benchmark Dataset of Agricultural Weather Stations over the Contiguous United States for Evapotranspiration Applications. _Accepted in Nature Scientific Data_. Preprint: https://doi.org/10.31223/X56T9Z.
+Dunkerly, C., Volk, J. M., Majumdar, S.,  Huntington, J. L., Allen, R. G., Pearson, C., Kim, Y., Morton, C. G., Minor, B. A., ReVelle, P., Kilic, A., Melton, F., Purdy, A. J., & Caldwell, T. G. (2026). A Benchmark Dataset of Agricultural Weather Stations over the Contiguous United States for Evapotranspiration Applications. _Accepted in Nature Scientific Data_. https://doi.org/10.1038/s41597-026-07819-7.
 
 **Data Releases:**
 
