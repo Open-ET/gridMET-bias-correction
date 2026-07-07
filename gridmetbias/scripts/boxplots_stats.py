@@ -109,7 +109,7 @@ def generate_boxplots(var_name):
         palette="Set3", hue='Region', 
         legend=False
     )
-    axes[1].set_title(f"{display_names[var_name]} Relative Bias ({time_period_label}) by Region (East/West of 100th Meridian)", fontsize=16, pad=10)
+    axes[1].set_title(rf"{display_names[var_name]} Relative Bias ({time_period_label}) by Region (East/West of 100$^\mathrm{{th}}$ Meridian)", fontsize=16, pad=10)
     axes[1].set_xlabel("")
     axes[1].set_ylabel(f"{display_names[var_name]} Relative Bias", fontsize=12)
 

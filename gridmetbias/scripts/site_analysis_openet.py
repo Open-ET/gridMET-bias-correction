@@ -508,7 +508,8 @@ def create_us_map_improved_sites(
         color = data['color']
         marker = data['marker']
         size = data['size']
-        plt.rcParams.update({'font.size': 20})        
+        site_str = 'sites' if len(site_ids) > 1 else 'site'
+        plt.rcParams.update({'font.size': 20})
         scatter = ax.scatter(
             x_coords,
             y_coords,
@@ -518,7 +519,7 @@ def create_us_map_improved_sites(
             alpha=0.9,
             edgecolors='black',
             linewidth=1,
-            label=f"{label} ({len(site_ids)} sites)",
+            label=f"{label} ({len(site_ids)} {site_str})",
             zorder=10
         )
         legend_elements.append(scatter)
