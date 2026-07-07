@@ -1666,4 +1666,18 @@ def gridmet_bias_comp_analysis(
                         f'{plot_dir}GridMET_ETo_{region_name}_{lulc_val}_Scatter_Monthly.png',
                         dpi=300, bbox_inches='tight'
                     )
+                    # Second copy of the CONUS all-land-cover figure (used in the data
+                    # paper) with journal-style units, i.e. mm month^-1 instead of mm/month.
+                    if region_name == 'All' and lulc_val == 'All':
+                        for ax, _month in zip(axes.flatten(), months):
+                            ax.set_xlabel(r'Station ETo (mm month$^{-1}$)')
+                            ax.set_ylabel(r'gridMET ETo (mm month$^{-1}$)')
+                            leg = ax.get_legend()
+                            if leg is not None:
+                                leg.set_title('gridMET ETo')
+                        plt.tight_layout()
+                        plt.savefig(
+                            f'{plot_dir}GridMET_ETo_{region_name}_{lulc_val}_Scatter_Monthly_mm_month-1.png',
+                            dpi=300, bbox_inches='tight'
+                        )
                     plt.close()
