@@ -278,7 +278,7 @@ def plot_error_reduction_scatter():
             sp.set_color("0.30")
 
     # shared labels
-    fig.supxlabel("Absolute error reduction (ETo) [mm/month]", fontsize=11, y=0.05)
+    fig.supxlabel(r"Absolute error reduction (ET$_\mathrm{o}$) [mm/month]", fontsize=11, y=0.05)
     fig.supylabel("Absolute error reduction (ET) [mm/month]", fontsize=11, x=0.06)
 
     # legend on the right, close to the panels (give it more room so labels aren't clipped)

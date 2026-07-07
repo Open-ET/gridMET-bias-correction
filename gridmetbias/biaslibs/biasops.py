@@ -21,6 +21,18 @@ from sklearn.metrics import mean_absolute_error
 warnings.filterwarnings("ignore")
 
 
+def _opaque_marker_edges(ax, linewidth=0.6):
+    """Give scatter markers crisp opaque white edges while keeping their
+    translucent faces. seaborn (>=0.12) applies the marker alpha to the edge as
+    well, so dense, low-alpha scatters lose their per-point outlines and blur
+    together. Restoring an opaque white edge keeps each point defined without
+    changing the face transparency (and therefore without changing any metric).
+    """
+    for coll in ax.collections:
+        coll.set_edgecolor((1, 1, 1, 1))
+        coll.set_linewidth(linewidth)
+
+
 def correlation_matrix_with_pvalues(
     df1: pd.DataFrame, 
     df2: pd.DataFrame, 
@@ -158,8 +170,8 @@ def plot_bias_corr_matrix_lon(
                 global_max = max(global_max, max_corr)
 
     var_name_dict = {
-        'ETO': 'ETo',
-        'ETR': 'ETr',
+        'ETO': r'ET$_\mathrm{o}$',
+        'ETR': r'ET$_\mathrm{r}$',
         'EA': 'ea',
         'TMIN': 'tmin',
         'TMAX': 'tmax',
@@ -330,8 +342,8 @@ def plot_bias_corr_matrix_climate(
                 global_max = max(global_max, max_corr)
 
     var_name_dict = {
-        'ETO': 'ETo',
-        'ETR': 'ETr',
+        'ETO': r'ET$_\mathrm{o}$',
+        'ETR': r'ET$_\mathrm{r}$',
         'EA': 'ea',
         'TMIN': 'tmin',
         'TMAX': 'tmax',
@@ -442,8 +454,8 @@ def plot_bias_corr_matrix_all(
             global_max = max(global_max, max_corr)
 
     var_name_dict = {
-        'ETO': 'ETo',
-        'ETR': 'ETr',
+        'ETO': r'ET$_\mathrm{o}$',
+        'ETR': r'ET$_\mathrm{r}$',
         'EA': 'ea',
         'TMIN': 'tmin',
         'TMAX': 'tmax',
@@ -770,12 +782,15 @@ def plot_irr_crop_bias_distributions(
                     hue_order = ['Irrigated', 'Non-Irrigated']
                     crop_colors = crop_colors[::-1]
                 sns.boxplot(
-                    data=bias_df_common, 
-                    y=var_name, 
+                    data=bias_df_common,
+                    y=var_name,
                     hue=hue,
                     hue_order=hue_order,
                     palette=crop_colors,
                     ax=ax
+                )
+                ax.set_ylabel(
+                    var_name.replace('ETo', r'ET$_\mathrm{o}$').replace('ETr', r'ET$_\mathrm{r}$')
                 )
                 var_name = var_name.split(' ')[0]
                 ax.yaxis.set_major_formatter(FuncFormatter(
@@ -882,12 +897,15 @@ def plot_irr_crop_bias_distributions(
                         sub_df_info = sub_df_info.iloc[:, ::-1]
                         csv_df = pd.concat([csv_df, sub_df_info])
                     sns.boxplot(
-                        data=bias_df_climate, 
-                        y=var_name, 
+                        data=bias_df_climate,
+                        y=var_name,
                         hue=hue,
                         hue_order=hue_order,
                         palette=crop_colors,
                         ax=ax
+                    )
+                    ax.set_ylabel(
+                        var_name.replace('ETo', r'ET$_\mathrm{o}$').replace('ETr', r'ET$_\mathrm{r}$')
                     )
                     ax.set_ylim(min_var - 0.1, max_var + 0.1)
                     ax.yaxis.set_major_formatter(FuncFormatter(
@@ -1208,12 +1226,15 @@ def plot_ag_bias_distributions(
                         sub_df_info = sub_df_info.iloc[:, ::-1]
                         csv_df = pd.concat([csv_df, sub_df_info])
                     sns.boxplot(
-                        data=bias_df_climate, 
-                        y=var_name, 
+                        data=bias_df_climate,
+                        y=var_name,
                         hue=hue,
                         hue_order=hue_order,
                         palette=crop_colors,
                         ax=ax
+                    )
+                    ax.set_ylabel(
+                        var_name.replace('ETo', r'ET$_\mathrm{o}$').replace('ETr', r'ET$_\mathrm{r}$')
                     )
                     ax.set_ylim(min_var - 0.1, max_var + 0.1)
                     ax.yaxis.set_major_formatter(FuncFormatter(
@@ -1330,7 +1351,7 @@ def gridmet_bias_comp_analysis(
         gridmet_corr_data = gridmet_df.drop(columns=gridmet_uncorr_col).rename(columns={
             gridmet_corr_col: gridmet_col
         })
-        hue_col = 'gridMET ET$_o$'
+        hue_col = r'gridMET ET$_\mathrm{o}$'
         gridmet_corr_data[hue_col] = 'Corrected'
         gridmet_uncorr_data = gridmet_df.drop(columns=gridmet_corr_col)
         gridmet_uncorr_data[hue_col] = 'Uncorrected'
@@ -1355,7 +1376,7 @@ def gridmet_bias_comp_analysis(
             )
             if ax_idx == 0:
                 sns.move_legend(ax, loc='upper left')
-            ax.set_ylabel('ET$_o$ (mm/month)')
+            ax.set_ylabel(r'ET$_\mathrm{o}$ (mm/month)')
             ax.set_title(lulc)
             ax.set_xlabel('')
             ax.set_ylim(0, 350)
@@ -1458,9 +1479,10 @@ def gridmet_bias_comp_analysis(
                     style_order=hue_order,
                     markers=['o', 's', 'D', 'P', 'v', '^'],
                     palette='deep',
-                    alpha=0.2,
+                    alpha=0.5,
                     ax=ax
                 )
+                _opaque_marker_edges(ax)
                 ax.legend(loc='upper left', title='LULC')
                 # Get the legend object
                 legend = ax.get_legend()
@@ -1471,8 +1493,8 @@ def gridmet_bias_comp_analysis(
                 max_y = max(corr_data[station_et_col].max(), corr_data[gridmet_col].max())
                 max_x = max(max_x, max_y) + 5
                 ax.plot([0, max_x], [0, max_x], color='k', linestyle='--')
-                ax.set_xlabel(f'Station ETo {unit_dict[time_val]}')
-                ax.set_ylabel(f'gridMET ETo {unit_dict[time_val]}')
+                ax.set_xlabel(rf'Station ET$_\mathrm{{o}}$ {unit_dict[time_val]}')
+                ax.set_ylabel(rf'gridMET ET$_\mathrm{{o}}$ {unit_dict[time_val]}')
                 ax.set_xlim(-0.5, max_x)
                 ax.set_ylim(-0.5, max_x)
                 if ax_idx == 0:
@@ -1532,11 +1554,12 @@ def gridmet_bias_comp_analysis(
                         color='red' if ax_idx == 0 else 'blue',
                         marker='o',
                         ax=ax,
-                        alpha=0.2
+                        alpha=0.5
                     )
+                    _opaque_marker_edges(ax)
                     ax.plot([0, max_x], [0, max_x], color='k', linestyle='--')
-                    ax.set_xlabel(f'Station ETo {unit_dict[time_val]}')
-                    ax.set_ylabel(f'gridMET ETo {unit_dict[time_val]}')
+                    ax.set_xlabel(rf'Station ET$_\mathrm{{o}}$ {unit_dict[time_val]}')
+                    ax.set_ylabel(rf'gridMET ET$_\mathrm{{o}}$ {unit_dict[time_val]}')
                     ax.set_xlim(-0.5, max_x)
                     ax.set_ylim(-0.5, max_x)
                     if ax_idx == 0:
@@ -1567,8 +1590,8 @@ def gridmet_bias_comp_analysis(
             # here we'll make monthly subplots for the same
             if time_val == 'Monthly':
                 time_station_df_monthly = time_station_df.copy(deep=True)
-                time_station_df_monthly = time_station_df_monthly.rename(columns={new_hue_col: 'gridMET ETo'})
-                new_hue_col = 'gridMET ETo'
+                time_station_df_monthly = time_station_df_monthly.rename(columns={new_hue_col: r'gridMET ET$_\mathrm{o}$'})
+                new_hue_col = r'gridMET ET$_\mathrm{o}$'
                 time_station_df_monthly['Month'] = time_station_df_monthly[date_col].dt.month
                 max_x = max(
                     time_station_df_monthly[station_et_col].max(), 
@@ -1601,10 +1624,11 @@ def gridmet_bias_comp_analysis(
                             y=gridmet_col,
                             hue=new_hue_col,
                             ax=ax,
-                            alpha=0.2,
+                            alpha=0.5,
                             palette={'Uncorrected': 'red', 'Bias-corrected': 'blue'},
                             legend=True if month == 1 else False,
                         )
+                        _opaque_marker_edges(ax)
                         text_posx = 5
                         text_posy_uncorr = max_x * 0.9
                         text_posy_corr = max_x * 0.8
@@ -1618,8 +1642,8 @@ def gridmet_bias_comp_analysis(
                             text_posy_uncorr = max_x * 0.18
                             text_posy_corr = max_x * 0.08
                         ax.set_title(calendar.month_name[month])
-                        ax.set_xlabel('Station ETo (mm/month)')
-                        ax.set_ylabel('gridMET ETo (mm/month)')
+                        ax.set_xlabel(r'Station ET$_\mathrm{o}$ (mm/month)')
+                        ax.set_ylabel(r'gridMET ET$_\mathrm{o}$ (mm/month)')
                         ax.set_xlim(-0.5, max_x)
                         ax.set_ylim(-0.5, max_x)
                         ax.plot([0, max_x], [0, max_x], color='k', linestyle='--')

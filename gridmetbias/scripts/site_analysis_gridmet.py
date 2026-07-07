@@ -91,8 +91,8 @@ def flux_gridmet_plots(
         ax.text(0.05, 0.95, metrics_text, transform=ax.transAxes,
                 fontsize=12, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5))
         
-        ax.set_xlabel(f'Station ET$_o$ (mm/{dt_type})')
-        ax.set_ylabel(f'gridMET ET$_o$ (mm/{dt_type})')
+        ax.set_xlabel(rf'Station ET$_\mathrm{{o}}$ (mm/{dt_type})')
+        ax.set_ylabel(rf'gridMET ET$_\mathrm{{o}}$ (mm/{dt_type})')
         
         # Add metrics to DataFrame
         metrics_df = pd.concat([
@@ -441,7 +441,7 @@ def create_us_map_improved_sites(
     # ax.grid(False)
     
     # Save the map
-    plt.title('gridMET ETo', fontsize=24, fontweight='bold')
+    plt.title(r'gridMET ET$_\mathrm{o}$', fontsize=24, fontweight='bold')
     plt.tight_layout()
     map_path = Path(output_dir) / "gridmet_improved_sites_map.png"
     plt.savefig(map_path, dpi=300, bbox_inches='tight', facecolor='white')
